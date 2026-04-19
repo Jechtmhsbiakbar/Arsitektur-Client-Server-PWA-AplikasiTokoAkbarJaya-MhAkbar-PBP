@@ -42,6 +42,5 @@ Arsitektur-Client-Server-MhAkbar-PBP/
 │   ├── koneksi.php         # Konfigurasi koneksi database
 │   └── get_barang.php      # Endpoint API (Output JSON)
 ├── app-toko/               # Client-Side (Frontend)
-│   ├── index.html          # Antarmuka Utama
-│   └── app.js              # Logika Fetch API & DOM Manipulation
-└── db_toko.sql             # Export Database MySQL
+    ├── index.html          # Antarmuka Utama
+    └── app.js              # Logika Fetch API & DOM Manipulation
