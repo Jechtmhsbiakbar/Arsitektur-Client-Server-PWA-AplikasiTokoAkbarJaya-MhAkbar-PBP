@@ -4,6 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tugas PBP - Client Server Architecture</title>
+
+    <!-- ✅ PWA: Link ke manifest.json -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- ✅ PWA: Meta tag theme color untuk browser bar -->
+    <meta name="theme-color" content="#8b5cf6">
+
+    <!-- ✅ PWA: Meta untuk iOS (Safari tidak baca manifest sepenuhnya) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="AppToko">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     
@@ -77,6 +90,31 @@
             border-radius: 8px;
             font-weight: 600;
         }
+
+        /* ✅ PWA Install Banner */
+        #pwa-banner {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #8b5cf6;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            box-shadow: 0 8px 25px rgba(139,92,246,0.4);
+            cursor: pointer;
+            z-index: 9999;
+            border: none;
+            font-size: 0.9rem;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-6px); }
+        }
     </style>
 </head>
 <body>
@@ -94,6 +132,8 @@
                     <p class="mb-0 text-muted small">MT: PBP | TEKNIK INFORMATIKA | UMP</p>
                     <p class="mb-0 text-muted small">Dosen: Sucipto, M.Kom</p>
                     <span class="badge bg-success-subtle text-success mt-1" style="font-size: 0.7rem;">Verified Client-Server Project</span>
+                    <!-- ✅ Badge PWA -->
+                    <span class="badge mt-1 ms-1" style="font-size: 0.7rem; background:#8b5cf6; color:white;">✅ PWA Ready</span>
                 </div>
             </div>
 
@@ -118,7 +158,7 @@
                                 </tr>
                             </thead>
                             <tbody id="isi-tabel">
-                                </tbody>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -130,6 +170,11 @@
         </div>
     </div>
 </div>
+
+<!-- ✅ Tombol Install PWA (muncul otomatis jika browser support) -->
+<button id="pwa-banner" onclick="installPWA()">
+    📲 Install Aplikasi Toko
+</button>
 
 <script src="app.js"></script>
 

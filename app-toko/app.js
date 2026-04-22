@@ -6,7 +6,6 @@ fetch("../api-toko/get_barang.php")
     const tbody = document.getElementById("isi-tabel");
     let baris = "";
 
-    // Contoh potongan kode di dalam app.js
     dataBarang.forEach((barang, index) => {
       baris += `
         <tr>
@@ -24,3 +23,66 @@ fetch("../api-toko/get_barang.php")
   .catch((error) => {
     console.error("Gagal memuat data:", error);
   });
+
+// ============================================================
+// ✅ PWA: Registrasi Service Worker
+// ============================================================
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("sw.js")
+      .then((registration) => {
+        console.log("✅ Service Worker Berhasil Didaftarkan!", registration.scope);
+      })
+      .catch((err) => {
+        console.error("❌ Service Worker Gagal:", err);
+      });
+  });
+}
+
+// ============================================================
+// ✅ PWA: Tangkap event Install Prompt (tombol install)
+// ============================================================
+let deferredPrompt;
+
+window.addEventListener("beforeinstallprompt", (e) => {
+  // Tahan dulu prompt bawaan browser
+  e.preventDefault();
+  deferredPrompt = e;
+
+  // Tampilkan banner install custom
+  const banner = document.getElementById("pwa-banner");
+  if (banner) {
+    banner.style.display = "block";
+  }
+
+  console.log("📲 App siap diinstall sebagai PWA!");
+});
+
+// Fungsi dipanggil saat tombol banner diklik
+function installPWA() {
+  if (!deferredPrompt) return;
+
+  // Tampilkan dialog install bawaan browser
+  deferredPrompt.prompt();
+
+  deferredPrompt.userChoice.then((choiceResult) => {
+    if (choiceResult.outcome === "accepted") {
+      console.log("✅ Pengguna menyetujui instalasi PWA");
+    } else {
+      console.log("❌ Pengguna menolak instalasi PWA");
+    }
+    deferredPrompt = null;
+
+    // Sembunyikan banner setelah prompt
+    const banner = document.getElementById("pwa-banner");
+    if (banner) banner.style.display = "none";
+  });
+}
+
+// Saat app sudah terinstall
+window.addEventListener("appinstalled", () => {
+  console.log("🎉 Aplikasi Toko berhasil diinstall!");
+  const banner = document.getElementById("pwa-banner");
+  if (banner) banner.style.display = "none";
+});
