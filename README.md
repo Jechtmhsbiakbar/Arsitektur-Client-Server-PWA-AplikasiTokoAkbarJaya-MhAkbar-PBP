@@ -107,7 +107,6 @@ CREATE TABLE barang (
     id INT PRIMARY KEY AUTO_INCREMENT,
     nama_barang VARCHAR(100) NOT NULL,
     harga INT NOT NULL,
-    stok INT NOT NULL DEFAULT 0,
     deskripsi TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -195,7 +194,6 @@ Status indicator berubah hijau = berhasil
          "id": 1,
          "nama_barang": "Laptop Dell XPS 13",
          "harga": "12000000",
-         "stok": 5,
          "deskripsi": null,
          "created_at": "2024-01-15 10:30:00",
          "updated_at": "2024-01-15 10:30:00"
@@ -231,7 +229,6 @@ http://localhost/toko-PBP-01/api-toko/get_barang.php
       "id": 1,
       "nama_barang": "Product Name",
       "harga": "1000000",
-      "stok": 10,
       "deskripsi": "Product description",
       "created_at": "2024-01-15 10:30:00",
       "updated_at": "2024-01-15 10:30:00"
@@ -276,7 +273,6 @@ fetch("api-toko/get_barang.php")
 | `id` | INT (Primary Key, Auto Increment) | ID unik untuk setiap barang |
 | `nama_barang` | VARCHAR(100) | Nama produk (wajib diisi) |
 | `harga` | INT | Harga barang dalam Rupiah |
-| `stok` | INT | Jumlah stok (default: 0) |
 | `deskripsi` | TEXT | Deskripsi detail barang |
 | `created_at` | TIMESTAMP | Waktu pembuatan record |
 | `updated_at` | TIMESTAMP | Waktu update terakhir |

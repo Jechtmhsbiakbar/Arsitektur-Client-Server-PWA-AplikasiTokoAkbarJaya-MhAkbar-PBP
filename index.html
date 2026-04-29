@@ -28,6 +28,279 @@
             color: #1a1a1a;
         }
 
+        /* Sidebar Styling */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 250px;
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+            padding: 20px;
+            color: white;
+            overflow-y: auto;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 999;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-header h3 {
+            margin: 0;
+            font-size: 1.3rem;
+            font-weight: 800;
+        }
+
+        .sidebar-close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: none;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: rgba(255, 255, 255, 0.2);
+            padding-left: 20px;
+        }
+
+        .sidebar-menu i {
+            margin-right: 12px;
+            font-size: 1.1rem;
+        }
+
+        .sidebar-divider {
+            margin: 20px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-btn-tambah {
+            width: 100%;
+            padding: 12px;
+            background: white;
+            color: #8b5cf6;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .sidebar-btn-tambah:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Toggle Button */
+        .sidebar-toggle {
+            position: fixed;
+            left: 20px;
+            top: 20px;
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            font-size: 1.3rem;
+            cursor: pointer;
+            z-index: 998;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 18px rgba(139, 92, 246, 0.4);
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 990;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        /* Main Content Adjustment */
+        .main-content {
+            transition: margin-left 0.3s ease;
+        }
+
+        /* Modal Styling */
+        .modal-tambah {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-tambah.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content-tambah {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            animation: slideUp 0.3s ease;
+        }
+
+        .modal-header-tambah {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .modal-header-tambah h3 {
+            margin: 0;
+            color: #8b5cf6;
+            font-weight: 700;
+        }
+
+        .modal-close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: border 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .btn-submit-tambah {
+            width: 100%;
+            padding: 12px;
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit-tambah:hover {
+            background: #7c3aed;
+            transform: translateY(-2px);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar-toggle {
+                display: flex;
+            }
+
+            .sidebar-close-btn {
+                display: block;
+            }
+        }
+
         /* Animasi Floating Card Identitas */
         .profile-card {
             background: rgba(255, 255, 255, 0.7);
@@ -186,14 +459,89 @@
                 transform: translateX(-50%) translateY(-6px);
             }
         }
+
+        /* Stats Cards */
+        .stats-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            border-color: #8b5cf6;
+        }
+
+        .stats-icon {
+            font-size: 2.5rem;
+        }
+
+        .stats-content h6 {
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+        }
+
+        .stats-content h3 {
+            font-size: 1.8rem;
+            margin: 0;
+        }
+
+        /* Search Input */
+        .search-input {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+        }
+
+        .search-input::placeholder {
+            color: #999;
+        }
     </style>
 </head>
 
 <body>
 
-    <div class="container py-5">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>🏪 Toko Akbar</h3>
+            <button class="sidebar-close-btn" onclick="toggleSidebar()">✕</button>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="#home" class="nav-link active" onclick="setActive(event)">📊 Dashboard</a></li>
+            <li><a href="#barang" class="nav-link" onclick="setActive(event)">📦 Daftar Barang</a></li>
+            <li><a href="#laporan" class="nav-link" onclick="setActive(event)">📈 Laporan</a></li>
+            <li><a href="#pengaturan" class="nav-link" onclick="setActive(event)">⚙️ Pengaturan</a></li>
+        </ul>
+        <div class="sidebar-divider"></div>
+        <button class="sidebar-btn-tambah" onclick="openModalTambah()">➕ Tambah Barang</button>
+    </div>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Toggle Button -->
+    <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
+    <div class="container py-5 main-content">
         <div class="row justify-content-center">
-            <div class="col-md-8">
+            <div class="col-md-10">
 
                 <div class="profile-card p-4 mb-4 shadow-sm d-flex align-items-center">
                     <div class="avatar-circle">MHA</div>
@@ -211,14 +559,45 @@
                     </div>
                 </div>
 
+                <!-- Stats Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-6 mb-3">
+                        <div class="stats-card">
+                            <div class="stats-icon">📦</div>
+                            <div class="stats-content">
+                                <h6 class="text-muted">Total Barang</h6>
+                                <h3 id="total-barang" class="fw-bold text-primary">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="stats-card">
+                            <div class="stats-icon">💰</div>
+                            <div class="stats-content">
+                                <h6 class="text-muted">Total Harga</h6>
+                                <h3 id="total-harga" class="fw-bold text-success">Rp 0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="card main-card shadow-lg border-0">
                     <div class="card-header bg-white p-4 border-0">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h4 class="mb-0 fw-bold">Daftar Inventaris Barang</h4>
-                            <div class="spinner-border spinner-border-sm text-primary" role="status"
-                                id="loading-status">
-                                <span class="visually-hidden">Loading...</span>
+                        <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap">
+                            <div>
+                                <h4 class="mb-0 fw-bold">Daftar Inventaris Barang</h4>
                             </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="spinner-border spinner-border-sm text-primary" role="status"
+                                    id="loading-status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Search Box -->
+                        <div class="mt-3">
+                            <input type="text" id="search-barang" class="form-control search-input"
+                                placeholder="🔍 Cari nama barang...">
                         </div>
                     </div>
                     <div class="card-body p-0">
@@ -226,10 +605,9 @@
                             <table class="table table-hover align-middle mb-0">
                                 <thead>
                                     <tr class="text-muted small text-uppercase">
-                                        <th class="ps-4 py-3">No</th>
+                                        <th class="ps-4 py-3">ID</th>
                                         <th>Nama Barang</th>
                                         <th>Harga Satuan</th>
-                                        <th class="text-center">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody id="isi-tabel">
@@ -243,6 +621,27 @@
                 </div>
 
             </div>
+        </div>
+    </div>
+
+    <!-- ✅ Modal Tambah Barang -->
+    <div class="modal-tambah" id="modal-tambah">
+        <div class="modal-content-tambah">
+            <div class="modal-header-tambah">
+                <h3>➕ Tambah Barang Baru</h3>
+                <button class="modal-close-btn" onclick="closeModalTambah()">✕</button>
+            </div>
+            <form id="form-tambah" onsubmit="submitTambahBarang(event)">
+                <div class="form-group">
+                    <label for="nama-barang">Nama Barang</label>
+                    <input type="text" id="nama-barang" placeholder="Masukkan nama barang..." required>
+                </div>
+                <div class="form-group">
+                    <label for="harga-barang">Harga Satuan</label>
+                    <input type="number" id="harga-barang" placeholder="Masukkan harga..." required>
+                </div>
+                <button type="submit" class="btn-submit-tambah">Simpan Barang</button>
+            </form>
         </div>
     </div>
 
@@ -270,12 +669,88 @@
     <script src="app.js"></script>
 
     <script>
-        // Tambahan animasi sedikit untuk loading status
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.getElementById('loading-status').classList.add('d-none');
-            }, 1500);
-        });
+        // ========== SIDEBAR FUNCTIONS ==========
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function setActive(event) {
+            event.preventDefault();
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            toggleSidebar(); // Tutup sidebar setelah klik
+        }
+
+        // ========== MODAL FUNCTIONS ==========
+        function openModalTambah() {
+            document.getElementById('modal-tambah').classList.add('show');
+            toggleSidebar(); // Tutup sidebar saat buka modal
+        }
+
+        function closeModalTambah() {
+            document.getElementById('modal-tambah').classList.remove('show');
+            document.getElementById('form-tambah').reset();
+        }
+
+        // Tutup modal jika klik di luar
+        window.onclick = function (event) {
+            const modal = document.getElementById('modal-tambah');
+            if (event.target === modal) {
+                closeModalTambah();
+            }
+        }
+
+        // ========== FORM SUBMIT ==========
+        // Tambahkan ini di akhir file app.js
+        async function submitTambahBarang(event) {
+            event.preventDefault();
+
+            const namaBarang = document.getElementById('nama-barang').value;
+            const hargaBarang = parseInt(document.getElementById('harga-barang').value);
+
+            if (!namaBarang || !hargaBarang) {
+                alert('Silakan isi semua field!');
+                return;
+            }
+
+            try {
+                const response = await fetch('api-toko/tambah_barang.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        nama_barang: namaBarang,
+                        harga: hargaBarang
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    alert('✅ Barang berhasil ditambahkan!');
+
+                    // Tutup modal (fungsi ini ada di HTML, jadi pastikan bisa diakses)
+                    closeModalTambah();
+
+                    // Update data lokal agar tabel langsung berubah tanpa refresh
+                    allBarangData.push(result.data);
+                    renderTable(allBarangData);
+                    updateStats();
+
+                    document.getElementById('search-barang').value = '';
+                } else {
+                    alert('❌ Gagal: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ Terjadi kesalahan koneksi');
+            }
+        }
+
     </script>
 
 </body>

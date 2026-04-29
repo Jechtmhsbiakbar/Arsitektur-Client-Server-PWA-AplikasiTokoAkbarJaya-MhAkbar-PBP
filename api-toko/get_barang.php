@@ -1,9 +1,9 @@
 <?php
 require "koneksi.php";
-header('Content-Type: application/json');
+/** @var mysqli $koneksi */
 
 // Query ambil data
-$query = "SELECT * FROM barang";
+$query = "SELECT id, nama_barang, harga FROM barang";
 $hasil = mysqli_query($koneksi, $query);
 
 // Cek query
