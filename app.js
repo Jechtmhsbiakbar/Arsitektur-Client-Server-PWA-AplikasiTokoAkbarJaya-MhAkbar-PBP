@@ -119,7 +119,44 @@ if ("serviceWorker" in navigator) {
 }
 
 // ============================================================
-// 📲 LOGIKA PWA (OVERLAY & BANNER)
+// � CLEAR CACHE & RELOAD
+// ============================================================
+async function clearCacheAndReload() {
+  console.log("🔄 Memulai clear cache dan reload...");
+  
+  // Clear semua cache service worker
+  const cacheNames = await caches.keys();
+  const cacheDeletePromises = cacheNames.map(cacheName => {
+    console.log(`🗑️ Menghapus cache: ${cacheName}`);
+    return caches.delete(cacheName);
+  });
+  await Promise.all(cacheDeletePromises);
+  
+  // Clear localStorage jika ada
+  localStorage.clear();
+  console.log("✅ LocalStorage cleared");
+  
+  // Clear sessionStorage jika ada
+  sessionStorage.clear();
+  console.log("✅ SessionStorage cleared");
+  
+  // Unregister service worker
+  if ('serviceWorker' in navigator) {
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    registrations.forEach(reg => {
+      console.log("🗑️ Unregistering service worker:", reg.scope);
+      reg.unregister();
+    });
+  }
+  
+  console.log("✅ Semua cache berhasil dihapus. Reload halaman...");
+  
+  // Reload halaman setelah semua dibersihkan
+  window.location.href = window.location.href;
+}
+
+// ============================================================
+// �📲 LOGIKA PWA (OVERLAY & BANNER)
 // ============================================================
 let deferredPrompt;
 const overlay = document.getElementById("pwa-overlay");

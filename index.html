@@ -107,7 +107,7 @@
 
         .sidebar-divider {
             margin: 20px 0;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
+    /* border-top: 1px solid rgba(255, 255, 255, 0.2); */
         }
 
         .sidebar-btn-tambah {
@@ -512,6 +512,122 @@
         .search-input::placeholder {
             color: #999;
         }
+
+        /* Modal Notifikasi Alert */
+        .modal-alert {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-alert.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .alert-content {
+            background-color: white;
+            padding: 40px 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+            text-align: center;
+        }
+
+        .alert-icon {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            animation: scaleIn 0.4s ease;
+        }
+
+        .alert-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #1a1a1a;
+        }
+
+        .alert-message {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .alert-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .btn-alert-close {
+            flex: 1;
+            padding: 12px 24px;
+            background: #e0e0e0;
+            color: #333;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .btn-alert-close:hover {
+            background: #d0d0d0;
+            transform: translateY(-2px);
+        }
+
+        .btn-alert-confirm {
+            flex: 1;
+            padding: 12px 24px;
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .btn-alert-confirm:hover {
+            background: #7c3aed;
+            transform: translateY(-2px);
+        }
+
+        /* Alert Success */
+        .alert-content.success {
+            border-left: 5px solid #28a745;
+        }
+
+        /* Alert Error */
+        .alert-content.error {
+            border-left: 5px solid #ff6b6b;
+        }
+
+        /* Alert Warning */
+        .alert-content.warning {
+            border-left: 5px solid #ffc107;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
     </style>
 </head>
 
@@ -523,14 +639,15 @@
             <h3>🏪 Toko Akbar</h3>
             <button class="sidebar-close-btn" onclick="toggleSidebar()">✕</button>
         </div>
-        <ul class="sidebar-menu">
+        <!-- <ul class="sidebar-menu">
             <li><a href="#home" class="nav-link active" onclick="setActive(event)">📊 Dashboard</a></li>
             <li><a href="#barang" class="nav-link" onclick="setActive(event)">📦 Daftar Barang</a></li>
             <li><a href="#laporan" class="nav-link" onclick="setActive(event)">📈 Laporan</a></li>
             <li><a href="#pengaturan" class="nav-link" onclick="setActive(event)">⚙️ Pengaturan</a></li>
-        </ul>
+        </ul> -->
         <div class="sidebar-divider"></div>
         <button class="sidebar-btn-tambah" onclick="openModalTambah()">➕ Tambah Barang</button>
+        <button class="sidebar-btn-tambah" style="background: #ff6b6b; color: white; margin-top: 10px;" onclick="clearCacheAndReload()">🔄 Reload Cache</button>
     </div>
 
     <!-- Sidebar Overlay -->
@@ -624,6 +741,18 @@
         </div>
     </div>
 
+    <!-- ✅ Modal Notifikasi Alert -->
+    <div class="modal-alert" id="modal-alert">
+        <div class="alert-content" id="alert-content">
+            <div class="alert-icon" id="alert-icon">ℹ️</div>
+            <div class="alert-title" id="alert-title">Notifikasi</div>
+            <div class="alert-message" id="alert-message">Pesan notifikasi akan ditampilkan di sini</div>
+            <div class="alert-buttons" id="alert-buttons">
+                <button class="btn-alert-close" onclick="closeAlert()">Tutup</button>
+            </div>
+        </div>
+    </div>
+
     <!-- ✅ Modal Tambah Barang -->
     <div class="modal-tambah" id="modal-tambah">
         <div class="modal-content-tambah">
@@ -705,6 +834,64 @@
             }
         }
 
+        // ========== ALERT MODAL FUNCTIONS ==========
+        function showAlert(type, title, message, onConfirm = null) {
+            const modalAlert = document.getElementById('modal-alert');
+            const alertContent = document.getElementById('alert-content');
+            const alertIcon = document.getElementById('alert-icon');
+            const alertTitle = document.getElementById('alert-title');
+            const alertMessage = document.getElementById('alert-message');
+            const alertButtons = document.getElementById('alert-buttons');
+
+            // Set icon berdasarkan tipe
+            const icons = {
+                success: '✅',
+                error: '❌',
+                warning: '⚠️',
+                info: 'ℹ️'
+            };
+            alertIcon.textContent = icons[type] || 'ℹ️';
+
+            // Set class untuk styling
+            alertContent.className = `alert-content ${type}`;
+            alertTitle.textContent = title;
+            alertMessage.textContent = message;
+
+            // Set buttons
+            if (type === 'success') {
+                alertButtons.innerHTML = '<button class="btn-alert-confirm" onclick="closeAlert()">Baik</button>';
+            } else if (type === 'error') {
+                alertButtons.innerHTML = '<button class="btn-alert-close" onclick="closeAlert()">Tutup</button>';
+            } else {
+                alertButtons.innerHTML = '<button class="btn-alert-close" onclick="closeAlert()">Tutup</button>';
+            }
+
+            // Tampilkan modal
+            modalAlert.classList.add('show');
+
+            // Simpan callback jika ada
+            window.alertCallback = onConfirm;
+        }
+
+        function closeAlert() {
+            const modalAlert = document.getElementById('modal-alert');
+            modalAlert.classList.remove('show');
+            
+            // Jalankan callback jika ada
+            if (window.alertCallback && typeof window.alertCallback === 'function') {
+                window.alertCallback();
+                window.alertCallback = null;
+            }
+        }
+
+        // Tutup modal jika klik di luar
+        document.addEventListener('click', function(event) {
+            const modalAlert = document.getElementById('modal-alert');
+            if (event.target === modalAlert) {
+                closeAlert();
+            }
+        });
+
         // ========== FORM SUBMIT ==========
         // Tambahkan ini di akhir file app.js
         async function submitTambahBarang(event) {
@@ -714,7 +901,7 @@
             const hargaBarang = parseInt(document.getElementById('harga-barang').value);
 
             if (!namaBarang || !hargaBarang) {
-                alert('Silakan isi semua field!');
+                showAlert('warning', 'Perhatian', 'Silakan isi semua field dengan lengkap!');
                 return;
             }
 
@@ -731,23 +918,19 @@
                 const result = await response.json();
 
                 if (result.status === 'success') {
-                    alert('✅ Barang berhasil ditambahkan!');
-
-                    // Tutup modal (fungsi ini ada di HTML, jadi pastikan bisa diakses)
-                    closeModalTambah();
-
-                    // Update data lokal agar tabel langsung berubah tanpa refresh
-                    allBarangData.push(result.data);
-                    renderTable(allBarangData);
-                    updateStats();
-
-                    document.getElementById('search-barang').value = '';
+                    showAlert('success', 'Sukses!', `Barang "${namaBarang}" berhasil ditambahkan ke inventaris.`, () => {
+                        closeModalTambah();
+                        allBarangData.push(result.data);
+                        renderTable(allBarangData);
+                        updateStats();
+                        document.getElementById('search-barang').value = '';
+                    });
                 } else {
-                    alert('❌ Gagal: ' + result.message);
+                    showAlert('error', 'Gagal Menambahkan', result.message);
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('❌ Terjadi kesalahan koneksi');
+                showAlert('error', 'Kesalahan Koneksi', 'Gagal terhubung ke server. Pastikan koneksi internet Anda stabil.');
             }
         }
 
