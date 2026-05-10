@@ -725,6 +725,7 @@
                                         <th class="ps-4 py-3">ID</th>
                                         <th>Nama Barang</th>
                                         <th>Harga Satuan</th>
+                                        <th style="width: 200px;">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody id="isi-tabel">
@@ -824,6 +825,7 @@
         function closeModalTambah() {
             document.getElementById('modal-tambah').classList.remove('show');
             document.getElementById('form-tambah').reset();
+            clearFormAndResetMode(); // Clear form dan reset mode edit/tambah
         }
 
         // Tutup modal jika klik di luar
@@ -892,8 +894,7 @@
             }
         });
 
-        // ========== FORM SUBMIT ==========
-        // Tambahkan ini di akhir file app.js
+        // ========== FORM SUBMIT (HANDLE TAMBAH & UPDATE) ==========
         async function submitTambahBarang(event) {
             event.preventDefault();
 
@@ -906,27 +907,68 @@
             }
 
             try {
-                const response = await fetch('api-toko/tambah_barang.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        nama_barang: namaBarang,
-                        harga: hargaBarang
-                    })
-                });
-
-                const result = await response.json();
-
-                if (result.status === 'success') {
-                    showAlert('success', 'Sukses!', `Barang "${namaBarang}" berhasil ditambahkan ke inventaris.`, () => {
-                        closeModalTambah();
-                        allBarangData.push(result.data);
-                        renderTable(allBarangData);
-                        updateStats();
-                        document.getElementById('search-barang').value = '';
+                // ===== MODE EDIT: UPDATE =====
+                if (editMode && editingBarangId) {
+                    console.log("📝 Mode UPDATE - ID:", editingBarangId);
+                    
+                    const response = await fetch('api-toko/update_barang.php', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            id: editingBarangId,
+                            nama_barang: namaBarang,
+                            harga: hargaBarang
+                        })
                     });
-                } else {
-                    showAlert('error', 'Gagal Menambahkan', result.message);
+
+                    const result = await response.json();
+
+                    if (result.status === 'success') {
+                        console.log("✅ Update berhasil:", result.data);
+                        
+                        showAlert('success', 'Sukses!', `Barang "${namaBarang}" berhasil diperbarui.`, () => {
+                            closeModalTambah();
+                            
+                            // AUTO-REFRESH DATA DARI SERVER
+                            console.log("🔄 Auto-refresh data dari server...");
+                            setTimeout(() => {
+                                loadDataBarang();
+                            }, 1000);
+                        });
+                    } else {
+                        showAlert('error', 'Gagal Memperbarui', result.message);
+                    }
+                }
+                // ===== MODE TAMBAH: CREATE =====
+                else {
+                    console.log("➕ Mode TAMBAH - Membuat data baru");
+                    
+                    const response = await fetch('api-toko/tambah_barang.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            nama_barang: namaBarang,
+                            harga: hargaBarang
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.status === 'success') {
+                        console.log("✅ Tambah berhasil:", result.data);
+                        
+                        showAlert('success', 'Sukses!', `Barang "${namaBarang}" berhasil ditambahkan ke inventaris.`, () => {
+                            closeModalTambah();
+                            
+                            // AUTO-REFRESH DATA DARI SERVER
+                            console.log("🔄 Auto-refresh data dari server...");
+                            setTimeout(() => {
+                                loadDataBarang();
+                            }, 1000);
+                        });
+                    } else {
+                        showAlert('error', 'Gagal Menambahkan', result.message);
+                    }
                 }
             } catch (error) {
                 console.error('Error:', error);
