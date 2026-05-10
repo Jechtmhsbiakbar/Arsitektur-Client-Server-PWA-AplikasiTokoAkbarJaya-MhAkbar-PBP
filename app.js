@@ -30,12 +30,16 @@ function updateStats() {
 
 function renderTable(dataToRender) {
   const tbody = document.getElementById("isi-tabel");
+  const mobileCardList = document.getElementById("mobile-card-list");
   let baris = "";
+  let mobileCards = "";
 
   if (dataToRender.length === 0) {
     baris = `<tr><td colspan="5" class="text-center text-muted py-4">Tidak ada barang ditemukan</td></tr>`;
+    mobileCards = `<div style="padding:60px 24px;text-align:center;"><div style="font-size:.88rem;color:var(--text-sub);">Tidak ada barang ditemukan</div></div>`;
   } else {
     dataToRender.forEach((barang) => {
+      // Desktop table row
       baris += `
         <tr>
             <td class="ps-4 fw-bold text-muted">${barang.id}</td>
@@ -46,9 +50,31 @@ function renderTable(dataToRender) {
                 <button class="btn btn-sm btn-danger" onclick="deleteBarang(${barang.id})">🗑️ Hapus</button>
             </td>
         </tr>`;
+      
+      // Mobile card
+      mobileCards += `
+        <div class="mobile-card">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;">
+                <div style="flex:1;">
+                    <div style="font-size:.72rem;color:var(--text-sub);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">ID ${barang.id}</div>
+                    <div style="font-size:.95rem;font-weight:700;color:var(--text-main);">${barang.nama_barang}</div>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;">
+                <div style="background:#ede9fe;color:var(--primary);border-radius:20px;padding:4px 12px;font-weight:700;font-size:.82rem;">Rp ${parseInt(barang.harga).toLocaleString("id-ID")}</div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button class="btn btn-sm btn-warning" onclick="editBarang(${barang.id})" style="flex:1;">✏️ Edit</button>
+                <button class="btn btn-sm btn-danger" onclick="deleteBarang(${barang.id})" style="flex:1;">🗑️ Hapus</button>
+            </div>
+        </div>`;
     });
   }
+  
   tbody.innerHTML = baris;
+  if (mobileCardList) {
+    mobileCardList.innerHTML = mobileCards;
+  }
 }
 
 function loadDataBarang() {
