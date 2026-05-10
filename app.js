@@ -225,6 +225,85 @@ function clearFormAndResetMode() {
   }
 }
 
+// ============================================================
+// 💾 SUBMIT FORM — TAMBAH ATAU EDIT
+// ============================================================
+function submitTambahBarang(event) {
+  event.preventDefault(); // ← WAJIB: cegah reload halaman
+
+  const namaBarang = document.getElementById("nama-barang").value.trim();
+  const hargaBarang = parseInt(document.getElementById("harga-barang").value);
+
+  if (!namaBarang || !hargaBarang || hargaBarang < 1) {
+    showAlert("warning", "⚠️ Perhatian!", "Nama barang dan harga wajib diisi dengan benar.");
+    return;
+  }
+
+  if (editMode && editingBarangId !== null) {
+    // ── MODE EDIT: kirim ke update_barang.php ──
+    console.log("✏️ Submitting edit untuk ID:", editingBarangId);
+
+    fetch("api-toko/update_barang.php", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: editingBarangId,
+        nama_barang: namaBarang,
+        harga: hargaBarang
+      })
+    })
+    .then((response) => {
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      return response.json();
+    })
+    .then((result) => {
+      console.log("✅ Update result:", result);
+      if (result.status === "success") {
+        closeModalTambah();
+        showAlert("success", "✅ Berhasil!", "Data barang berhasil diperbarui.");
+        setTimeout(() => loadDataBarang(), 800);
+      } else {
+        showAlert("error", "❌ Gagal!", result.message || "Gagal memperbarui barang.");
+      }
+    })
+    .catch((error) => {
+      console.error("❌ Error update:", error);
+      showAlert("error", "❌ Gagal!", "Terjadi kesalahan saat memperbarui data.");
+    });
+
+  } else {
+    // ── MODE TAMBAH: kirim ke tambah_barang.php ──
+    console.log("➕ Submitting tambah barang baru");
+
+    fetch("api-toko/tambah_barang.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        nama_barang: namaBarang,
+        harga: hargaBarang
+      })
+    })
+    .then((response) => {
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      return response.json();
+    })
+    .then((result) => {
+      console.log("✅ Tambah result:", result);
+      if (result.status === "success") {
+        closeModalTambah();
+        showAlert("success", "✅ Berhasil!", "Barang baru berhasil ditambahkan.");
+        setTimeout(() => loadDataBarang(), 800);
+      } else {
+        showAlert("error", "❌ Gagal!", result.message || "Gagal menambahkan barang.");
+      }
+    })
+    .catch((error) => {
+      console.error("❌ Error tambah:", error);
+      showAlert("error", "❌ Gagal!", "Terjadi kesalahan saat menambahkan data.");
+    });
+  }
+}
+
 window.addEventListener('DOMContentLoaded', () => {
   console.log("📄 DOM Content Loaded");
   const loadingStatus = document.getElementById('loading-status');
