@@ -1,26 +1,27 @@
-# 🏪 Arsitektur Client-Server: Katalog Inventaris Barang
-**Tugas Mata Kuliah: Pemrograman Berbasis Platform (PBP)**
+# 🏪 Toko Akbar Jaya — Katalog Inventaris Barang
+**Tugas Final Mata Kuliah: Pemrograman Berbasis Platform (PBP)**
 
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/MhAkbar/Arsitektur-Client-Server-MhAkbar-PBP)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-blue.svg)](https://github.com/MhAkbar/Arsitektur-Client-Server-MhAkbar-PBP/pulls)
-[![Status](https://img.shields.io/badge/Status-Active-brightgreen.svg)]()
+[![Status](https://img.shields.io/badge/Status-Live-brightgreen.svg)]()
+[![PWA](https://img.shields.io/badge/PWA-Ready-blueviolet.svg)]()
+[![Hosting](https://img.shields.io/badge/Hosting-InfinityFree-orange.svg)]()
 
 ---
 
 ## 🌐 Akses Aplikasi Live
-**Cek aplikasi secara langsung di sini:**  
-👉 **[https://aplikasitokoakbarjaya.infinityfreeapp.com/](https://aplikasitokoakbarjaya.infinityfreeapp.com/) INI Tugas Ke 2**
 
----
+| Tugas | URL | Status |
+|-------|-----|--------|
+| **Tugas 2** | [https://aplikasitokoakbarjaya.infinityfreeapp.com/](https://aplikasitokoakbarjaya.infinityfreeapp.com/) | ✅ Online |
+| **Tugas 3 (Final)** | [https://tokoakbar.infinityfree.me/](https://tokoakbar.infinityfree.me/) | ✅ Online |
 
-## 🌐 Akses Aplikasi Live
-**Cek aplikasi secara langsung di sini:**  
-👉 **[https://tokoakbar.infinityfree.me/](https://aplikasitokoakbarjaya.infinityfreeapp.com/) INI Tugas Ke 3**
-
+> 🎯 **Tugas Final:** [https://tokoakbar.infinityfree.me/](https://tokoakbar.infinityfree.me/)
 
 ---
 
 ## 👤 Identitas Mahasiswa
+
 | Data | Informasi |
 |------|-----------|
 | **Nama** | Muhammad Hasbih Akbar |
@@ -33,241 +34,94 @@
 ---
 
 ## 📌 Deskripsi Proyek
-Proyek ini mendemonstrasikan penerapan **Arsitektur Client-Server** sederhana dalam konteks aplikasi web modern. Aplikasi ini berfungsi untuk menampilkan data inventaris barang secara dinamis dari database MySQL ke antarmuka web tanpa melalui proses *hardcoding* di sisi HTML. 
 
-Komunikasi data dilakukan secara *asynchronous* menggunakan **Fetch API** untuk mengambil data berformat **JSON** yang disediakan oleh endpoint PHP, memastikan pengalaman pengguna yang responsif dan real-time.
+Proyek ini adalah aplikasi web **Full-Stack** yang mendemonstrasikan penerapan arsitektur Client-Server modern dalam bentuk aplikasi inventaris barang toko. Dibangun menggunakan **PHP Native**, **MySQL**, **Vanilla JavaScript**, dan **REST API**, serta dikembangkan menjadi **Progressive Web App (PWA)** yang dapat diinstall di perangkat Android.
 
-### ✨ Fitur Utama:
-- **UI Interaktif:** Desain modern menggunakan Bootstrap 5 dengan efek *Glassmorphism* dan animasi smooth.
-- **Animasi Tilt:** Kartu identitas yang bergerak mengikuti gerakan kursor untuk interaksi yang menarik.
-- **Dynamic Data Loading:** Sinkronisasi otomatis antara database MySQL dengan tampilan tabel secara real-time.
-- **Loading State:** Indikator visual yang jelas saat data sedang dimuat dari server.
-- **PWA Support:** Dukungan Progressive Web App untuk akses offline dan pengalaman seperti native app.
-- **API RESTful:** Endpoint JSON yang clean dan terstruktur untuk komunikasi client-server.
-- **Responsive Design:** Desain yang beradaptasi dengan semua ukuran perangkat (mobile, tablet, desktop).
+Perjalanan pengembangan proyek ini mencakup:
+1. Memahami konsep arsitektur platform
+2. Membangun REST API murni dengan PHP
+3. Mengintegrasikan API dengan Vanilla JS menggunakan Fetch API
+4. Mengubah aplikasi menjadi PWA dengan fitur offline
+5. **Merilis aplikasi secara publik ke internet (Free Shared Hosting)**
+
+---
+
+## ✨ Fitur Aplikasi
+
+| Fitur | Keterangan |
+|-------|-----------|
+| ➕ **Create** | Tambah data barang baru via modal form |
+| 📋 **Read** | Tampilkan semua data barang dari database secara real-time |
+| ✏️ **Update** | Edit data barang yang sudah ada |
+| 🗑️ **Delete** | Hapus data barang dengan konfirmasi |
+| 🔍 **Search** | Filter barang berdasarkan nama secara client-side |
+| 📲 **PWA Install** | Bisa diinstall di homescreen Android seperti aplikasi native |
+| 📡 **Offline Mode** | Akses halaman utama tetap bisa saat koneksi terputus (Service Worker) |
+| 📱 **Responsive** | Tampilan desktop (tabel) dan mobile (card) yang berbeda |
 
 ---
 
 ## 🛠️ Teknologi yang Digunakan
+
 | Layer | Teknologi |
 |-------|-----------|
-| **Frontend** | HTML5, CSS3 (Custom Styles), JavaScript ES6+ (Fetch API), Bootstrap 5 |
-| **Backend** | PHP (Native, procedural) |
+| **Frontend** | HTML5, CSS3, JavaScript ES6+ (Vanilla JS), Bootstrap 5 |
+| **Backend** | PHP Native (Procedural) |
 | **Database** | MySQL |
-| **Server** | XAMPP (Apache + MySQL) |
-| **Tools** | VS Code, Git, Postman (optional) |
-| **Progressive Web App** | Service Worker, Manifest.json |
+| **API** | REST API (JSON) |
+| **PWA** | Service Worker, Web App Manifest |
+| **Server Lokal** | XAMPP (Apache + MySQL) |
+| **Hosting** | InfinityFree (Free Shared Hosting) |
+| **Tools** | VS Code, FileZilla FTP, Git |
 
 ---
 
-## 📂 Struktur Folder
+## 📂 Struktur Folder Proyek
+
 ```text
 toko-PBP-01/
-├── 📄 README.md                    # Dokumentasi proyek
+├── 📄 index.html               # Antarmuka utama aplikasi (SPA)
+├── 📄 app.js                   # Semua logika JS: Fetch API, CRUD, PWA
+├── 📄 manifest.json            # Konfigurasi PWA manifest
+├── 📄 sw.js                    # Service Worker (caching & offline)
+├── 📄 README.md                # Dokumentasi proyek
 │
-├── 📁 api-toko/                    # Server-Side (Backend API)
-│   ├── koneksi.php                 # Konfigurasi koneksi database MySQL
-│   └── get_barang.php              # Endpoint API - Mengembalikan data JSON
+├── 📁 icons/                   # Aset icon untuk PWA
+│   ├── icon-192x192.png        # Icon 192px (wajib untuk PWA)
+│   └── icon-512x512.png        # Icon 512px (wajib untuk PWA)
 │
-└── 📁 app-toko/                    # Client-Side (Frontend PWA)
-    ├── 📄 index.html               # Antarmuka utama aplikasi
-    ├── 📄 app.js                   # Logika Fetch API & DOM Manipulation
-    ├── 📄 manifest.json            # Konfigurasi PWA manifest
-    ├── 📄 sw.js                    # Service Worker untuk offline support
-    └── 📁 icons/                   # Icon assets untuk PWA
-        ├── icon-192x192.png        # Icon 192px
-        └── icon-512x512.png        # Icon 512px
+└── 📁 api-toko/                # Backend REST API (PHP)
+    ├── koneksi.php             # Konfigurasi koneksi database + CORS header
+    ├── get_barang.php          # GET  — Ambil semua data barang
+    ├── tambah_barang.php       # POST — Tambah barang baru
+    ├── update_barang.php       # PUT  — Update data barang
+    └── delete_barang.php       # DELETE — Hapus data barang
 ```
 
 ---
 
-## ✅ Persyaratan Sistem (Prerequisites)
+## 🔌 Dokumentasi REST API
 
-### Software yang Harus Diinstall:
-- **XAMPP** (versi 7.4 atau lebih tinggi) - [Download](https://www.apachefriends.org/)
-  - Includes Apache Web Server
-  - Includes MySQL Database Server
-  - Includes PHP Runtime
-- **Text Editor/IDE:** VS Code, Sublime Text, atau sejenisnya
-- **Browser Modern:** Chrome, Firefox, Safari, atau Edge (untuk PWA support)
-- **Git** (optional, untuk version control) - [Download](https://git-scm.com/)
+Base URL (Hosting): `https://tokoakbar.infinityfree.me/api-toko/`
 
-### Versi yang Direkomendasikan:
-- PHP: 7.4 atau 8.0+
-- MySQL: 5.7 atau 8.0+
-- Node.js: Tidak diperlukan (backend murni PHP)
+| Method | Endpoint | Fungsi |
+|--------|----------|--------|
+| `GET` | `get_barang.php` | Ambil semua data barang |
+| `POST` | `tambah_barang.php` | Tambah barang baru |
+| `PUT` | `update_barang.php` | Update data barang |
+| `DELETE` | `delete_barang.php` | Hapus data barang |
 
----
-
-## 🚀 Panduan Instalasi & Setup
-
-### 1️⃣ Persiapan Database
-
-**Buat database dan tabel:**
-```sql
--- Membuat database
-CREATE DATABASE db_toko;
-USE db_toko;
-
--- Membuat tabel barang
-CREATE TABLE barang (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    nama_barang VARCHAR(100) NOT NULL,
-    harga INT NOT NULL,
-    deskripsi TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-
--- Insert data sampel
-INSERT INTO barang (nama_barang, harga, stok) VALUES
-('Laptop Dell XPS 13', 12000000, 5),
-('Monitor LG 24 inch', 2500000, 8),
-('Keyboard Mechanical', 1500000, 15),
-('Mouse Logitech', 500000, 20),
-('Headset Gaming', 1200000, 10);
-```
-
-### 2️⃣ Clone atau Download Proyek
-
-```bash
-# Jika menggunakan Git
-git clone <repository-url>
-cd toko-PBP-01
-
-# Atau manual: download dan extract ke folder project
-```
-
-### 3️⃣ Letakkan Proyek di XAMPP
-
-Pindahkan folder `toko-PBP-01` ke:
-```
-C:\xampp\htdocs\toko-PBP-01\
-```
-(Pada Windows dengan XAMPP default installation)
-
-### 4️⃣ Konfigurasi Koneksi Database
-
-Edit file `api-toko/koneksi.php`:
-```php
-<?php
-$host = "localhost";      // Sesuaikan jika berbeda
-$user = "root";           // Username MySQL (default: root)
-$pass = "";               // Password MySQL (default: kosong)
-$db   = "db_toko";        // Nama database yang sudah dibuat
-?>
-```
-
-### 5️⃣ Jalankan Apache dan MySQL
-
-**Buka XAMPP Control Panel:**
-- ✅ Klik tombol **Start** di samping **Apache**
-- ✅ Klik tombol **Start** di samping **MySQL**
-
-Status indicator berubah hijau = berhasil
-
----
-
-## 🎯 Cara Menggunakan Aplikasi
-
-### Mengakses Frontend (Client)
-1. **Buka browser** dan arahkan ke:
-   ```
-   http://localhost/toko-PBP-01/app-toko/index.html
-   ```
-
-2. **Data akan langsung dimuat** secara otomatis dari database melalui Fetch API
-
-3. **Fitur yang tersedia:**
-   - 📊 Lihat daftar semua barang dalam tabel
-   - 🎨 Hover pada kartu identitas untuk melihat animasi tilt
-   - 💾 Aplikasi bisa diinstall sebagai PWA (click tombol install di browser)
-   - 📱 Akses offline tersedia melalui Service Worker
-
-### Testing API Endpoint (Backend)
-1. **Buka browser atau Postman:**
-   ```
-   http://localhost/toko-PBP-01/api-toko/get_barang.php
-   ```
-
-2. **Respons yang diharapkan (JSON):**
-   ```json
-   {
-     "status": "success",
-     "message": "Berhasil mengambil data",
-     "jumlah": 5,
-     "data": [
-       {
-         "id": 1,
-         "nama_barang": "Laptop Dell XPS 13",
-         "harga": "12000000",
-         "deskripsi": null,
-         "created_at": "2024-01-15 10:30:00",
-         "updated_at": "2024-01-15 10:30:00"
-       },
-       ...
-     ]
-   }
-   ```
-
----
-
-## 🔌 Dokumentasi API
-
-### Endpoint: GET `/api-toko/get_barang.php`
-
-**Deskripsi:** Mengambil semua data barang dari database dalam format JSON
-
-**Method:** `GET`
-
-**URL:** 
-```
-http://localhost/toko-PBP-01/api-toko/get_barang.php
-```
-
-**Response (Success - 200):**
+### Contoh Response GET:
 ```json
 {
   "status": "success",
   "message": "Berhasil mengambil data",
-  "jumlah": 5,
+  "jumlah": 3,
   "data": [
-    {
-      "id": 1,
-      "nama_barang": "Product Name",
-      "harga": "1000000",
-      "deskripsi": "Product description",
-      "created_at": "2024-01-15 10:30:00",
-      "updated_at": "2024-01-15 10:30:00"
-    }
+    { "id": 1, "nama_barang": "Beras Premium 5kg", "harga": 75000 },
+    { "id": 2, "nama_barang": "Minyak Goreng 2L", "harga": 32000 }
   ]
 }
-```
-
-**Response (Error):**
-```json
-{
-  "status": "error",
-  "message": "Query gagal: [error description]"
-}
-```
-
-**Headers:**
-```
-Content-Type: application/json
-```
-
-**Client-Side Usage:**
-```javascript
-fetch("api-toko/get_barang.php")
-  .then(response => response.json())
-  .then(data => {
-    if (data.status === "success") {
-      console.log("Data barang:", data.data);
-      console.log("Jumlah barang:", data.jumlah);
-    }
-  })
-  .catch(error => console.error("Error:", error));
 ```
 
 ---
@@ -275,169 +129,271 @@ fetch("api-toko/get_barang.php")
 ## 🗄️ Skema Database
 
 ### Tabel: `barang`
-| Kolom | Tipe Data | Keterangan |
-|-------|-----------|-----------|
-| `id` | INT (Primary Key, Auto Increment) | ID unik untuk setiap barang |
-| `nama_barang` | VARCHAR(100) | Nama produk (wajib diisi) |
-| `harga` | INT | Harga barang dalam Rupiah |
-| `deskripsi` | TEXT | Deskripsi detail barang |
-| `created_at` | TIMESTAMP | Waktu pembuatan record |
-| `updated_at` | TIMESTAMP | Waktu update terakhir |
+
+```sql
+CREATE TABLE `barang` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nama_barang` varchar(255) NOT NULL,
+  `harga` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+```
+
+| Kolom | Tipe | Keterangan |
+|-------|------|-----------|
+| `id` | INT, Auto Increment | Primary key unik |
+| `nama_barang` | VARCHAR(255) | Nama barang (wajib diisi) |
+| `harga` | INT | Harga dalam Rupiah |
 
 ---
 
-## 🔒 Alur Komunikasi Client-Server
+## 🚀 Cara Instalasi Lokal (Localhost)
 
+### Prasyarat:
+- XAMPP (Apache + MySQL aktif)
+- Browser modern (Chrome/Firefox/Edge)
+
+### Langkah-langkah:
+
+**1. Clone atau download proyek:**
+```bash
+git clone https://github.com/MhAkbar/Arsitektur-Client-Server-MhAkbar-PBP
+cd toko-PBP-01
 ```
-┌─────────────────────────────────────────────────────────┐
-│                   USER BROWSER (CLIENT)                  │
-│  ┌──────────────────────────────────────────────────┐   │
-│  │  index.html                                      │   │
-│  │  - Tampilkan tabel barang kosong (loading state) │   │
-│  │  - Jalankan app.js saat halaman load             │   │
-│  └──────────────────────────────────────────────────┘   │
-└──────────────────────┬──────────────────────────────────┘
-                       │ 1. FETCH REQUEST
-                       │ GET /api-toko/get_barang.php
-                       ↓
-         ┌─────────────────────────────────┐
-         │   WEB SERVER (APACHE)            │
-         │   ├─ Process request             │
-         │   └─ Route ke PHP handler        │
-         └─────────────────┬───────────────┘
-                           │ 2. EXECUTE PHP
-                           ↓
-       ┌───────────────────────────────────┐
-       │   PHP Backend (get_barang.php)     │
-       │   ├─ Connect ke database           │
-       │   ├─ Query: SELECT * FROM barang   │
-       │   ├─ Format JSON response          │
-       │   └─ Return JSON                   │
-       └───────────────────┬────────────────┘
-                           │ 3. RESPONSE JSON
-                           ↓
-         ┌─────────────────────────────────┐
-         │   MySQL Database (db_toko)       │
-         │   ├─ Tabel: barang               │
-         │   ├─ Rows: 5 products            │
-         │   └─ Return query results        │
-         └──────────────────────────────────┘
+
+**2. Letakkan di folder XAMPP:**
+```
+C:\xampp\htdocs\toko-PBP-01\
+```
+
+**3. Buat database di phpMyAdmin:**
+```sql
+CREATE DATABASE db_toko;
+USE db_toko;
+
+CREATE TABLE `barang` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nama_barang` varchar(255) NOT NULL,
+  `harga` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+```
+
+**4. Konfigurasi `api-toko/koneksi.php` untuk localhost:**
+```php
+$host = "localhost";
+$user = "root";
+$pass = "";
+$db   = "db_toko";
+```
+
+**5. Akses aplikasi:**
+```
+http://localhost/toko-PBP-01/index.html
 ```
 
 ---
 
-## 🌐 Fitur PWA (Progressive Web App)
+## ☁️ Deployment ke Free Shared Hosting (Tugas Final)
 
-Aplikasi mendukung teknologi PWA modern:
+Berikut perubahan yang dilakukan untuk proses deployment ke InfinityFree:
 
-### Fitur yang Diaktifkan:
-- ✅ **Installable:** Bisa diinstall seperti aplikasi native
-- ✅ **Offline Support:** Akses data menggunakan Service Worker caching
-- ✅ **Responsive:** Bekerja sempurna di mobile, tablet, desktop
-- ✅ **App-like Experience:** Full-screen mode dengan custom theme color
+### 1. Menambahkan CORS Header di `api-toko/koneksi.php`
 
-### File Terkait:
-- `manifest.json` - Metadata aplikasi PWA
-- `sw.js` - Service Worker untuk caching & offline support
-- `icons/` - Icon assets untuk berbagai ukuran
+Diperlukan agar `fetch()` dari browser tidak diblokir saat request ke server hosting.
 
-### Cara Install PWA:
-1. Buka aplikasi di browser
-2. Klik ikon **Install** atau **Add to Home Screen** (tergantung browser)
-3. Aplikasi dapat diakses dari home screen seperti aplikasi native
+```php
+// SEBELUM:
+header('Content-Type: application/json; charset=utf-8');
+
+// SESUDAH:
+header('Content-Type: application/json; charset=utf-8');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+```
+
+### 2. Memperbaiki Bug `showAlert()` di `app.js`
+
+Urutan argumen pada fungsi `deleteBarang()` sebelumnya terbalik.
+
+```javascript
+// SEBELUM (bug — urutan argumen salah):
+showAlert("✅ Berhasil!", "Data barang telah dihapus", "success");
+
+// SESUDAH (benar — sesuai definisi fungsi showAlert(type, title, message)):
+showAlert("success", "✅ Berhasil!", "Data barang telah dihapus");
+```
+
+### 3. Menyamakan `theme_color` di `manifest.json`
+
+Warna tema tidak konsisten antara manifest dan meta tag HTML.
+
+```json
+// SEBELUM:
+"theme_color": "#8b5cf6"
+
+// SESUDAH (konsisten dengan meta tag di index.html):
+"theme_color": "#4338ca",
+"background_color": "#f1f0fb"
+```
+
+### 4. Menambahkan Cache Bootstrap ke Service Worker (`sw.js`)
+
+Agar tampilan Bootstrap tetap rapi saat mode offline.
+
+```javascript
+// SEBELUM — hanya cache file lokal
+const urlsToCache = [
+  './', './index.html', './app.js', './manifest.json',
+  './icons/icon-192x192.png', './icons/icon-512x512.png'
+];
+
+// SESUDAH — tambahkan Bootstrap CDN
+const urlsToCache = [
+  './', './index.html', './app.js', './manifest.json',
+  './icons/icon-192x192.png', './icons/icon-512x512.png',
+  'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
+  'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js'
+];
+```
+
+### 5. Update Seluruh URL `fetch()` di `app.js` ke URL Absolut
+
+Sesuai instruksi tugas final — seluruh URL fetch diperbarui menggunakan domain hosting.
+
+```javascript
+// SEBELUM (path relatif untuk localhost):
+fetch("api-toko/get_barang.php")
+fetch("api-toko/tambah_barang.php", { method: "POST", ... })
+fetch("api-toko/update_barang.php", { method: "PUT", ... })
+fetch("api-toko/delete_barang.php", { method: "DELETE", ... })
+
+// SESUDAH (URL absolut sesuai domain hosting):
+fetch("https://tokoakbar.infinityfree.me/api-toko/get_barang.php")
+fetch("https://tokoakbar.infinityfree.me/api-toko/tambah_barang.php", { method: "POST", ... })
+fetch("https://tokoakbar.infinityfree.me/api-toko/update_barang.php", { method: "PUT", ... })
+fetch("https://tokoakbar.infinityfree.me/api-toko/delete_barang.php", { method: "DELETE", ... })
+```
+
+### 6. Struktur Upload ke Hosting via FileZilla
+
+```
+htdocs/  (root direktori hosting)
+├── index.html
+├── app.js
+├── manifest.json
+├── sw.js
+├── icons/
+│   ├── icon-192x192.png
+│   └── icon-512x512.png
+└── api-toko/
+    ├── koneksi.php
+    ├── get_barang.php
+    ├── tambah_barang.php
+    ├── update_barang.php
+    └── delete_barang.php
+```
+
+### 7. Konfigurasi Database di Hosting
+
+```php
+// api-toko/koneksi.php — konfigurasi untuk InfinityFree:
+$host = "sqlXXX.infinityfree.com";   // MySQL host dari panel
+$user = "if0_XXXXXXX";               // Username database
+$pass = "passwordAnda";              // Password database
+$db   = "if0_XXXXXXX_db_toko";       // Nama database
+```
+
+---
+
+## 📱 Cara Install sebagai PWA di Android
+
+1. Buka **Chrome** di HP Android
+2. Akses **[https://tokoakbar.infinityfree.me/](https://tokoakbar.infinityfree.me/)**
+3. Tunggu beberapa detik — akan muncul overlay **"Install Toko Akbar Jaya"**
+4. Klik **"INSTAL SEKARANG"**
+5. Aplikasi tersimpan di homescreen dan bisa dibuka tanpa browser
+6. Tampil dalam mode **standalone** (tanpa address bar) seperti aplikasi native
+
+> Jika overlay tidak muncul otomatis, klik tombol **"📲 Install Toko Akbar Jaya"** di bagian bawah halaman.
 
 ---
 
 ## 🐛 Troubleshooting
 
-### ❌ Error: "Koneksi database gagal"
-**Solusi:**
-- Pastikan MySQL sudah berjalan di XAMPP Control Panel
-- Verifikasi credentials di `api-toko/koneksi.php`
-- Pastikan database `db_toko` sudah dibuat
-
-### ❌ Error: "Query gagal"
-**Solusi:**
-- Verifikasi tabel `barang` sudah dibuat dengan schema yang benar
-- Pastikan ada minimal satu record di tabel
-- Cek syntax SQL di database query
-
-### ❌ Tabel tidak muncul / Data tidak tampil
-**Solusi:**
-- Buka console browser (F12) untuk melihat error message
-- Check Network tab untuk melihat respons dari API
-- Verifikasi path ke `get_barang.php` sudah benar
-
-### ❌ Service Worker tidak terdaftar
-**Solusi:**
-- Pastikan browser mendukung PWA (Chrome, Firefox, Edge)
-- Buka di `http://` bukan `file://` (beberapa fitur PWA butuh HTTPS/localhost)
-- Clear browser cache dan reload
-
-### ❌ Animasi tilt tidak bekerja
-**Solusi:**
-- Pastikan JavaScript tidak ter-block di browser settings
-- Periksa console untuk error messages
-- Coba di browser lain untuk verifikasi kompatibilitas
+| Error | Penyebab | Solusi |
+|-------|----------|--------|
+| Data tidak tampil | Koneksi database gagal | Cek kredensial di `koneksi.php` |
+| CRUD tidak berfungsi di hosting | CORS header belum ada | Pastikan header CORS sudah ditambahkan di `koneksi.php` |
+| PWA tidak bisa diinstall | Tidak ada HTTPS atau manifest error | InfinityFree sudah menyediakan HTTPS gratis |
+| Tampilan rusak saat offline | Bootstrap tidak ter-cache | Pastikan URL Bootstrap ada di `urlsToCache` di `sw.js` |
+| Service Worker tidak aktif | Cache versi lama | Buka DevTools → Application → SW → klik "Update" |
 
 ---
 
-## 📊 Contoh Data yang Ditampilkan
+## 🔄 Alur Komunikasi Client-Server
 
-Setelah setup berhasil, tabel akan menampilkan data seperti:
-
-| No | Nama Barang | Harga | Aksi |
-|----|-----------|-------|------|
-| 1 | Laptop Dell XPS 13 | Rp 12.000.000 | Detail |
-| 2 | Monitor LG 24 inch | Rp 2.500.000 | Detail |
-| 3 | Keyboard Mechanical | Rp 1.500.000 | Detail |
-| 4 | Mouse Logitech | Rp 500.000 | Detail |
-| 5 | Headset Gaming | Rp 1.200.000 | Detail |
+```
+[Browser/Android PWA]
+        │
+        │ fetch("https://tokoakbar.infinityfree.me/api-toko/get_barang.php")
+        ↓
+[InfinityFree Web Server — Apache]
+        │
+        │ Eksekusi PHP
+        ↓
+[get_barang.php]
+        │
+        │ SELECT * FROM barang
+        ↓
+[MySQL Database — db_toko]
+        │
+        │ Return rows
+        ↓
+[PHP → JSON encode]
+        │
+        │ {"status":"success","data":[...]}
+        ↓
+[Browser render tabel / mobile card]
+```
 
 ---
 
-## 🔄 Flow Interaksi Aplikasi
+## 📊 Hasil Pengujian
 
-1. **User membuka aplikasi** → index.html diload dengan loading state
-2. **app.js dijalankan** → Fetch request dikirim ke API
-3. **API menerima request** → get_barang.php dieksekusi
-4. **Database query** → Data diambil dari tabel barang
-5. **JSON response** → Server mengirim data dalam format JSON
-6. **Client render DOM** → Tabel diisi dengan data dari response
-7. **User interaksi** → Hover animasi, bisa install sebagai PWA
-
----
-
-## 📝 Catatan Penting
-
-- Aplikasi ini dibuat dengan **PHP Native** tanpa framework untuk mendemonstrasikan konsep dasar Client-Server
-- Database credentials: Default XAMPP (user: `root`, pass: kosong)
-- Semua komunikasi dioptimalkan untuk responsivitas dan user experience
-- PWA support tersedia untuk pengalaman app-like modern
-- Code sudah commented untuk pembelajaran dan maintenance
+| Skenario | Hasil |
+|----------|-------|
+| Tambah barang baru | ✅ Berhasil |
+| Edit data barang | ✅ Berhasil |
+| Hapus data barang | ✅ Berhasil |
+| Search/filter barang | ✅ Berhasil |
+| Akses API langsung via browser | ✅ JSON tampil |
+| Install PWA di Android | ✅ Berhasil |
+| Buka dari homescreen (standalone) | ✅ Berhasil |
+| Tampilan responsive di mobile | ✅ Berhasil |
 
 ---
 
 ## 📄 Lisensi
-Proyek ini dibuat untuk keperluan akademik dalam mata kuliah **Pemrograman Berbasis Platform (PBP)**. 
+
+Proyek ini dibuat untuk keperluan akademik dalam mata kuliah **Pemrograman Berbasis Platform (PBP)**.  
 Bebas dimodifikasi dan didistribusikan untuk tujuan pembelajaran.
 
 ---
 
 ## 🙏 Ucapan Terima Kasih
-- **Dosen Pengampu:** Sucipto, M.Kom
-- **Universitas Muhammadiyah Pontianak**
-- **Bootstrap 5** - Untuk framework CSS
-- **Google Fonts** - Untuk font Inter
+
+- **Dosen Pengampu:** Sucipto, M.Kom — Universitas Muhammadiyah Pontianak
+- **Bootstrap 5** — Framework CSS
+- **Google Fonts** — Font Outfit & Playfair Display
+- **InfinityFree** — Free Shared Hosting
 
 ---
 
-## 📧 Kontak & Support
-Jika ada pertanyaan atau issue:
-- 📌 Buat issue di repository GitHub
-- 💬 Hubungi mahasiswa pengembang
-- 📚 Konsultasi dengan dosen pengampu
-
----
-
-**Last Updated:** April 2026 | **Status:** Maintained ✅
+**Last Updated:** Juni 2026 | **Status:** ✅ Final — Deployed & Live

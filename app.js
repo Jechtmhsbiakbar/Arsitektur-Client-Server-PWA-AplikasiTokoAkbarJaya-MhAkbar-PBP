@@ -80,7 +80,7 @@ function renderTable(dataToRender) {
 function loadDataBarang() {
   console.log("🔄 Loading data barang...");
   
-  fetch("api-toko/get_barang.php")
+  fetch("https://tokoakbar.infinityfree.me/api-toko/get_barang.php")
     .then((response) => {
       console.log("✅ Response status:", response.status);
       if (!response.ok) {
@@ -123,7 +123,7 @@ function deleteBarang(id) {
   console.log("🗑️ Menghapus barang dengan ID:", id);
   
   // Fetch API untuk DELETE
-  fetch("api-toko/delete_barang.php", {
+  fetch("https://tokoakbar.infinityfree.me/api-toko/delete_barang.php", {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json"
@@ -141,7 +141,7 @@ function deleteBarang(id) {
     console.log("✅ Delete result:", result);
     
     if (result.status === "success") {
-      showAlert("✅ Berhasil!", "Data barang telah dihapus", "success");
+      showAlert("success", "✅ Berhasil!", "Data barang telah dihapus");
       
       // AUTO-REFRESH DATA DARI SERVER
       console.log("🔄 Auto-refresh data dari server...");
@@ -243,7 +243,7 @@ function submitTambahBarang(event) {
     // ── MODE EDIT: kirim ke update_barang.php ──
     console.log("✏️ Submitting edit untuk ID:", editingBarangId);
 
-    fetch("api-toko/update_barang.php", {
+    fetch("https://tokoakbar.infinityfree.me/api-toko/update_barang.php", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -275,7 +275,7 @@ function submitTambahBarang(event) {
     // ── MODE TAMBAH: kirim ke tambah_barang.php ──
     console.log("➕ Submitting tambah barang baru");
 
-    fetch("api-toko/tambah_barang.php", {
+    fetch("https://tokoakbar.infinityfree.me/api-toko/tambah_barang.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
