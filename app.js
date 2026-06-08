@@ -30,12 +30,15 @@ let allBarangData = []; // Store semua data untuk search
 let editMode = false; // Tracking apakah mode edit atau tambah
 let editingBarangId = null; // Menyimpan ID data yang sedang diedit
 
-// Helper function untuk get Authorization headers
-function getAuthHeaders() {
-    return {
-        'Content-Type': 'application/json',
-        'Authorization': myToken
-    };
+// Helper: header standar tanpa Authorization
+// (InfinityFree memblokir Authorization header di shared hosting)
+function getHeaders() {
+    return { 'Content-Type': 'application/json' };
+}
+
+// Helper: sisipkan token ke dalam object data sebelum dikirim ke server
+function withToken(data) {
+    return Object.assign({ token: myToken }, data);
 }
 
 function updateStats() {
@@ -71,11 +74,13 @@ function renderTable(dataToRender) {
     baris = `<tr><td colspan="5" class="text-center text-muted py-4">Tidak ada barang ditemukan</td></tr>`;
     mobileCards = `<div style="padding:60px 24px;text-align:center;"><div style="font-size:.88rem;color:var(--text-sub);">Tidak ada barang ditemukan</div></div>`;
   } else {
-    dataToRender.forEach((barang) => {
+    dataToRender.forEach((barang, index) => {
+      const nomor = index + 1; // Nomor urut tampilan, selalu 1 s/d n
+
       // Desktop table row
       baris += `
         <tr>
-            <td class="ps-4 fw-bold text-muted">${barang.id}</td>
+            <td class="ps-4 fw-bold text-muted">${nomor}</td>
             <td class="fw-semibold">${barang.nama_barang}</td>
             <td class="price-tag">Rp ${parseInt(barang.harga).toLocaleString("id-ID")}</td>
             <td>
@@ -89,7 +94,7 @@ function renderTable(dataToRender) {
         <div class="mobile-card">
             <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;">
                 <div style="flex:1;">
-                    <div style="font-size:.72rem;color:var(--text-sub);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">ID ${barang.id}</div>
+                    <div style="font-size:.72rem;color:var(--text-sub);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">No. ${nomor}</div>
                     <div style="font-size:.95rem;font-weight:700;color:var(--text-main);">${barang.nama_barang}</div>
                 </div>
             </div>
@@ -114,7 +119,7 @@ function loadDataBarang() {
   console.log("🔄 Loading data barang...");
   
   fetch(`${baseUrl}/api-toko/get_barang.php`, {
-    headers: getAuthHeaders()
+    headers: getHeaders()
   })
     .then((response) => {
       console.log("✅ Response status:", response.status);
@@ -171,8 +176,8 @@ function deleteBarang(id) {
   // Fetch API untuk DELETE
   fetch(`${baseUrl}/api-toko/delete_barang.php`, {
     method: "DELETE",
-    headers: getAuthHeaders(),
-    body: JSON.stringify({ id: id })
+    headers: getHeaders(),
+    body: JSON.stringify(withToken({ id: id }))
   })
   .then((response) => {
     console.log("✅ Delete response status:", response.status);
@@ -298,12 +303,12 @@ function submitTambahBarang(event) {
 
     fetch(`${baseUrl}/api-toko/update_barang.php`, {
       method: "PUT",
-      headers: getAuthHeaders(),
-      body: JSON.stringify({
+      headers: getHeaders(),
+      body: JSON.stringify(withToken({
         id: editingBarangId,
         nama_barang: namaBarang,
         harga: hargaBarang
-      })
+      }))
     })
     .then((response) => {
       // Jika 401, token invalid
@@ -340,11 +345,11 @@ function submitTambahBarang(event) {
 
     fetch(`${baseUrl}/api-toko/tambah_barang.php`, {
       method: "POST",
-      headers: getAuthHeaders(),
-      body: JSON.stringify({
+      headers: getHeaders(),
+      body: JSON.stringify(withToken({
         nama_barang: namaBarang,
         harga: hargaBarang
-      })
+      }))
     })
     .then((response) => {
       // Jika 401, token invalid

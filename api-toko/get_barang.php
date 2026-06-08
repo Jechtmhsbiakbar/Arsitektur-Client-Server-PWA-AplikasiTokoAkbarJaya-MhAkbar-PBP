@@ -1,31 +1,42 @@
 <?php
-require "koneksi.php";
+header('Content-Type: application/json; charset=utf-8');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+
+require_once "koneksi.php";
 /** @var mysqli $koneksi */
 
-// Query ambil data
-$query = "SELECT id, nama_barang, harga FROM barang";
+// get_barang.php tidak butuh auth (hanya baca data publik toko).
+// Jika ingin diproteksi juga, uncomment dua baris di bawah:
+// require_once "auth_helper.php";
+// requireValidToken($koneksi);
+
+$query = "SELECT id, nama_barang, harga FROM barang ORDER BY id ASC";
 $hasil = mysqli_query($koneksi, $query);
 
-// Cek query
 if (!$hasil) {
+    http_response_code(500);
     die(json_encode([
-        "status" => "error",
+        "status"  => "error",
         "message" => "Query gagal: " . mysqli_error($koneksi)
     ]));
 }
 
-// Tampung data
 $data_barang = [];
-
 while ($baris = mysqli_fetch_assoc($hasil)) {
     $data_barang[] = $baris;
 }
 
-// Response
 echo json_encode([
-    "status" => "success",
+    "status"  => "success",
     "message" => "Berhasil mengambil data",
-    "jumlah" => count($data_barang),
-    "data" => $data_barang
-], JSON_PRETTY_PRINT);
+    "jumlah"  => count($data_barang),
+    "data"    => $data_barang
+]);
 ?>

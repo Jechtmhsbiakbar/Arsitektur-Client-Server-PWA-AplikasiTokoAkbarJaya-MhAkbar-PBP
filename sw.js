@@ -1,4 +1,4 @@
-const CACHE_NAME = 'toko-pwa-v3';
+const CACHE_NAME = 'toko-pwa-v4';
 const urlsToCache = [
   './',
   './index.html',
@@ -13,7 +13,7 @@ const urlsToCache = [
 // ============================================================
 // VERSION TRACKING (Update ini setiap kali ada perubahan code)
 // ============================================================
-const APP_VERSION = 'v3.0';
+const APP_VERSION = 'v4.0';
 console.log('🔧 Service Worker Version:', APP_VERSION);
 
 // ============================================================

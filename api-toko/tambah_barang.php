@@ -2,68 +2,50 @@
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization');
+header('Access-Control-Allow-Headers: Content-Type');
 
-// Handle preflight request dari browser
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
 }
 
-include "koneksi.php";
+require_once "koneksi.php";
 /** @var mysqli $koneksi */
+require_once "auth_helper.php";
 
-// =================== BAGIAN PENGUNCI API ===================
-// Menangkap Header Authorization yang dikirim Javascript
-$headers = apache_request_headers();
-$token_dikirim = isset($headers['Authorization']) ? $headers['Authorization'] : '';
+// Baca body sekali, pakai untuk auth + data
+$data = json_decode(file_get_contents("php://input"), true);
 
-// Cek apakah token dikirim, dan apakah token tersebut ada di tabel users
-$cek_token = mysqli_query($koneksi, "SELECT * FROM users WHERE token='$token_dikirim'");
+requireValidToken($koneksi, $data);
 
-if(mysqli_num_rows($cek_token) === 0 || $token_dikirim === '') {
-    // JIKA TOKEN PALSU / KOSONG, HENTIKAN PROGRAM DISINI! (die)
-    http_response_code(401);
-    die(json_encode(["status" => "error", "pesan" => "Akses Ditolak! Token Invalid."]));
-}
-// ===========================================================
-
-$json_data = file_get_contents("php://input");
-$data = json_decode($json_data, true);
-
-// Validasi input
+// ── Validasi input ──────────────────────────────────────────
 if (!isset($data["nama_barang"]) || !isset($data["harga"])) {
     http_response_code(400);
-    echo json_encode([
-        "status" => "error",
-        "message" => "Field tidak lengkap"
-    ]);
+    echo json_encode(["status" => "error", "message" => "Field tidak lengkap"]);
     exit;
 }
 
-$nama_barang = mysqli_real_escape_string($koneksi, $data["nama_barang"]);
-$harga = (int)$data["harga"];
+$nama_barang = mysqli_real_escape_string($koneksi, trim($data["nama_barang"]));
+$harga       = (int) $data["harga"];
 
-// Query insert
-$query = "INSERT INTO barang (nama_barang, harga) VALUES ('$nama_barang', $harga)";
-$hasil = mysqli_query($koneksi, $query);
+if ($nama_barang === '' || $harga < 1) {
+    http_response_code(400);
+    echo json_encode(["status" => "error", "message" => "Nama tidak boleh kosong dan harga harus > 0"]);
+    exit;
+}
+
+// ── Insert ──────────────────────────────────────────────────
+$hasil = mysqli_query($koneksi, "INSERT INTO barang (nama_barang, harga) VALUES ('$nama_barang', $harga)");
 
 if ($hasil) {
     http_response_code(201);
     echo json_encode([
-        "status" => "success",
+        "status"  => "success",
         "message" => "Barang berhasil ditambahkan",
-        "data" => [
-            "id" => mysqli_insert_id($koneksi),
-            "nama_barang" => $nama_barang,
-            "harga" => $harga
-        ]
+        "data"    => ["id" => (int) mysqli_insert_id($koneksi), "nama_barang" => $nama_barang, "harga" => $harga]
     ]);
 } else {
     http_response_code(500);
-    echo json_encode([
-        "status" => "error",
-        "message" => "Gagal menambahkan barang: " . mysqli_error($koneksi)
-    ]);
+    echo json_encode(["status" => "error", "message" => "Gagal: " . mysqli_error($koneksi)]);
 }
 ?>
