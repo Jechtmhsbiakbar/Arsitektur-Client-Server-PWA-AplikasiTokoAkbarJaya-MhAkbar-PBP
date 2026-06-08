@@ -1,4 +1,4 @@
-const CACHE_NAME = 'toko-pwa-v2';
+const CACHE_NAME = 'toko-pwa-v3';
 const urlsToCache = [
   './',
   './index.html',
@@ -9,6 +9,12 @@ const urlsToCache = [
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js'
 ];
+
+// ============================================================
+// VERSION TRACKING (Update ini setiap kali ada perubahan code)
+// ============================================================
+const APP_VERSION = 'v3.0';
+console.log('🔧 Service Worker Version:', APP_VERSION);
 
 // ============================================================
 // 1. TAHAP INSTALL: Simpan file-file penting ke Cache Browser
@@ -41,7 +47,21 @@ self.addEventListener('activate', event => {
       );
     })
   );
+  
+  // Claim semua clients agar SW baru immediately mengendalikan halaman
   self.clients.claim();
+  
+  // 🆕 KIRIM PESAN KE SEMUA CLIENTS BAHWA ADA UPDATE
+  self.clients.matchAll().then(clients => {
+    clients.forEach(client => {
+      client.postMessage({
+        type: 'SW_UPDATED',
+        version: APP_VERSION,
+        cacheVersion: CACHE_NAME,
+        timestamp: new Date().toISOString()
+      });
+    });
+  });
 });
 
 // ============================================================

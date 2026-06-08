@@ -10,16 +10,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 // koneksi untuk localhost xampp
-// $host = "localhost";
-// $user = "root";
-// $pass = "";
-// $db   = "db_toko";
+$host = "localhost";
+$user = "root";
+$pass = "";
+$db   = "db_toko";
 
 // Koneksi untuk hosting infinityfree 
-$host = "sql101.infinityfree.com";
-$user = "if0_41799381";
-$pass = "2B9LgM34ErW";
-$db   = "if0_41799381_db_toko";
+// $host = "sql101.infinityfree.com";
+// $user = "if0_41799381";
+// $pass = "2B9LgM34ErW";
+// $db   = "if0_41799381_db_toko";
 
 // Koneksi ke database
 $koneksi = mysqli_connect($host, $user, $pass, $db);

@@ -1,9 +1,42 @@
 // ============================================================
+// � TOKEN GUARD - PROTEKSI HALAMAN UTAMA
+// ============================================================
+const myToken = localStorage.getItem('token_toko');
+
+if (!myToken) {
+    alert('❌ Anda harus login terlebih dahulu!');
+    window.location.href = 'login.html';
+}
+
+console.log('✅ Token ditemukan, user authorized');
+// ============================================================
+// 🌐 DETERMINE BASE URL (LOCALHOST vs HOSTING)
+// ============================================================
+let baseUrl;
+
+if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    // Localhost
+    baseUrl = 'http://localhost/toko-PBP-01';
+} else {
+    // Hosting
+    baseUrl = 'https://tokoakbar.infinityfree.me';
+}
+
+console.log('🌐 Base URL:', baseUrl);
+// ============================================================
 // 🛒 DATA FETCHING & STATE MANAGEMENT
 // ============================================================
 let allBarangData = []; // Store semua data untuk search
 let editMode = false; // Tracking apakah mode edit atau tambah
 let editingBarangId = null; // Menyimpan ID data yang sedang diedit
+
+// Helper function untuk get Authorization headers
+function getAuthHeaders() {
+    return {
+        'Content-Type': 'application/json',
+        'Authorization': myToken
+    };
+}
 
 function updateStats() {
   const totalBarang = allBarangData.length;
@@ -80,15 +113,28 @@ function renderTable(dataToRender) {
 function loadDataBarang() {
   console.log("🔄 Loading data barang...");
   
-  fetch("https://tokoakbar.infinityfree.me/api-toko/get_barang.php")
+  fetch(`${baseUrl}/api-toko/get_barang.php`, {
+    headers: getAuthHeaders()
+  })
     .then((response) => {
       console.log("✅ Response status:", response.status);
+      
+      // Jika 401, berarti token invalid/expired
+      if (response.status === 401) {
+        console.error("❌ Token invalid atau expired. Redirect ke login.");
+        localStorage.removeItem('token_toko');
+        window.location.href = 'login.html';
+        return;
+      }
+      
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       return response.json();
     })
     .then((responseObject) => {
+      if (!responseObject) return; // Exit jika sudah redirect ke login
+      
       console.log("📦 Response Object:", responseObject);
       
       if (!responseObject.data) {
@@ -123,15 +169,22 @@ function deleteBarang(id) {
   console.log("🗑️ Menghapus barang dengan ID:", id);
   
   // Fetch API untuk DELETE
-  fetch("https://tokoakbar.infinityfree.me/api-toko/delete_barang.php", {
+  fetch(`${baseUrl}/api-toko/delete_barang.php`, {
     method: "DELETE",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: getAuthHeaders(),
     body: JSON.stringify({ id: id })
   })
   .then((response) => {
     console.log("✅ Delete response status:", response.status);
+    
+    // Jika 401, token invalid
+    if (response.status === 401) {
+      console.error("❌ Token invalid atau expired. Redirect ke login.");
+      localStorage.removeItem('token_toko');
+      window.location.href = 'login.html';
+      return;
+    }
+    
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -243,9 +296,9 @@ function submitTambahBarang(event) {
     // ── MODE EDIT: kirim ke update_barang.php ──
     console.log("✏️ Submitting edit untuk ID:", editingBarangId);
 
-    fetch("https://tokoakbar.infinityfree.me/api-toko/update_barang.php", {
+    fetch(`${baseUrl}/api-toko/update_barang.php`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: getAuthHeaders(),
       body: JSON.stringify({
         id: editingBarangId,
         nama_barang: namaBarang,
@@ -253,10 +306,20 @@ function submitTambahBarang(event) {
       })
     })
     .then((response) => {
+      // Jika 401, token invalid
+      if (response.status === 401) {
+        console.error("❌ Token invalid atau expired. Redirect ke login.");
+        localStorage.removeItem('token_toko');
+        window.location.href = 'login.html';
+        return;
+      }
+      
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       return response.json();
     })
     .then((result) => {
+      if (!result) return; // Exit jika sudah redirect ke login
+      
       console.log("✅ Update result:", result);
       if (result.status === "success") {
         closeModalTambah();
@@ -275,19 +338,29 @@ function submitTambahBarang(event) {
     // ── MODE TAMBAH: kirim ke tambah_barang.php ──
     console.log("➕ Submitting tambah barang baru");
 
-    fetch("https://tokoakbar.infinityfree.me/api-toko/tambah_barang.php", {
+    fetch(`${baseUrl}/api-toko/tambah_barang.php`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: getAuthHeaders(),
       body: JSON.stringify({
         nama_barang: namaBarang,
         harga: hargaBarang
       })
     })
     .then((response) => {
+      // Jika 401, token invalid
+      if (response.status === 401) {
+        console.error("❌ Token invalid atau expired. Redirect ke login.");
+        localStorage.removeItem('token_toko');
+        window.location.href = 'login.html';
+        return;
+      }
+      
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       return response.json();
     })
     .then((result) => {
+      if (!result) return; // Exit jika sudah redirect ke login
+      
       console.log("✅ Tambah result:", result);
       if (result.status === "success") {
         closeModalTambah();
@@ -336,15 +409,154 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // ============================================================
-// 🛠️ SERVICE WORKER REGISTRATION
+// 🛠️ SERVICE WORKER REGISTRATION & UPDATE DETECTION
 // ============================================================
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("sw.js")
-      .then((reg) => console.log("✅ SW Terdaftar:", reg.scope))
+      .then((reg) => {
+        console.log("✅ SW Terdaftar:", reg.scope);
+        
+        // 🆕 LISTEN KE MESSAGE DARI SW TENTANG UPDATE
+        navigator.serviceWorker.addEventListener('message', (event) => {
+          const data = event.data;
+          
+          if (data.type === 'SW_UPDATED') {
+            console.log('🆕 Update dari SW detected!', data);
+            
+            // Update localStorage dengan info update terbaru
+            localStorage.setItem('sw-version', data.version);
+            localStorage.setItem('cache-name', data.cacheVersion);
+            localStorage.setItem('last-update', new Date().toLocaleTimeString('id-ID'));
+            localStorage.setItem('latest-version', data.version);
+            
+            // Update UI di testing panel
+            updateDebugInfo();
+            updateUpdateStatus();
+            
+            // Tampilkan notifikasi update
+            showUpdateNotification();
+            
+            // AUTO-RELOAD SETELAH 3 DETIK (agar user lihat notifikasi dulu)
+            setTimeout(() => {
+              console.log('🔄 Auto-reloading dengan versi terbaru...');
+              window.location.reload();
+            }, 3000);
+          }
+        });
+        
+        // CHECK UPDATE SETIAP 5 MENIT (jadi tidak hanya tunggu SW)
+        setInterval(() => {
+          console.log("🔄 Checking for SW updates...");
+          reg.update();
+        }, 5 * 60 * 1000);
+        
+        // DETECT KETIKA ADA UPDATE TERSEDIA (via updatefound event)
+        reg.addEventListener('updatefound', () => {
+          const newWorker = reg.installing;
+          
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              // Update tersedia - tampilkan notifikasi ke user
+              console.log("🆕 Update tersedia!");
+              
+              // Juga trigger update info
+              localStorage.setItem('latest-version', 'v' + Math.floor(Math.random() * 100));
+              updateUpdateStatus();
+              showUpdateNotification();
+            }
+          });
+        });
+      })
       .catch((err) => console.error("❌ SW Gagal:", err));
   });
 }
+
+// ============================================================
+// 📢 SHOW UPDATE NOTIFICATION
+// ============================================================
+function showUpdateNotification() {
+  // Cek apakah sudah ada notification
+  if (document.getElementById('update-notification')) return;
+  
+  const notification = document.createElement('div');
+  notification.id = 'update-notification';
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    color: white;
+    padding: 16px 20px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 9999;
+    animation: slideInRight 0.4s ease-out;
+    max-width: 350px;
+  `;
+  
+  notification.innerHTML = `
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+      <span style="font-size: 20px;">✨</span>
+      <span>Fitur baru tersedia!</span>
+    </div>
+    <div style="font-size: 13px; color: rgba(255,255,255,0.9); margin-bottom: 12px;">
+      Aplikasi Anda telah diperbarui dengan fitur dan perbaikan terbaru.
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <button onclick="location.reload()" style="
+        flex: 1;
+        background: white;
+        color: #059669;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 13px;
+      ">Muat Ulang</button>
+      <button onclick="document.getElementById('update-notification').remove()" style="
+        flex: 1;
+        background: rgba(255,255,255,0.2);
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 13px;
+      ">Nanti</button>
+    </div>
+  `;
+  
+  document.body.appendChild(notification);
+  
+  // Auto remove setelah 30 detik jika user tidak klik
+  setTimeout(() => {
+    if (document.getElementById('update-notification')) {
+      document.getElementById('update-notification').remove();
+    }
+  }, 30000);
+}
+
+// CSS Animation untuk slideInRight
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(400px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+`;
+document.head.appendChild(style);
 
 // ============================================================
 // � CLEAR CACHE & RELOAD
@@ -481,10 +693,12 @@ function installPWA() {
 }
 
 // Fungsi saat klik "Nanti Saja" (Tutup Overlay, Munculkan Banner)
+// TETAP MENAMPILKAN BANNER SAAT LOGIN
 function hideOverlay() {
   if (overlay) overlay.style.display = "none";
   if (banner && !checkInstallation()) {
-    banner.style.display = "block"; // Munculkan tombol kecil di bawah
+    banner.style.display = "block"; // SELALU tampilkan banner kecil
+    console.log("📲 PWA Banner ditampilkan (tetap muncul saat login)");
   }
 }
 
@@ -498,3 +712,307 @@ window.addEventListener("appinstalled", () => {
 });
 
 window.addEventListener('load', checkInstallation);
+
+// ============================================================
+// 🚪 LOGOUT FUNCTION
+// ============================================================
+function logout() {
+  const konfirmasi = confirm('Yakin ingin logout? Anda akan diarahkan ke halaman login.');
+  
+  if (konfirmasi) {
+    console.log('🚪 Logging out...');
+    
+    // Clear token dari localStorage
+    localStorage.removeItem('token_toko');
+    
+    // Optional: Clear app state
+    allBarangData = [];
+    editMode = false;
+    editingBarangId = null;
+    
+    // Redirect ke login page
+    window.location.href = 'login.html';
+  }
+}
+
+// ============================================================
+// 🧪 TESTING & DEBUG FUNCTIONS
+// ============================================================
+
+let testingPanelExpanded = true;
+
+// Toggle testing section dengan shortcut Ctrl+Shift+T atau klik header
+document.addEventListener('keydown', (e) => {
+  if (e.ctrlKey && e.shiftKey && e.key === 'T') {
+    e.preventDefault();
+    toggleTestingPanel();
+  }
+});
+
+function toggleTestingPanel() {
+  const content = document.getElementById('testing-content');
+  const header = document.getElementById('testing-header');
+  const expandIcon = document.getElementById('expand-icon');
+  
+  testingPanelExpanded = !testingPanelExpanded;
+  
+  if (testingPanelExpanded) {
+    // Expand
+    content.style.maxHeight = '2000px';
+    content.style.padding = '16px';
+    header.style.borderRadius = '12px 12px 0 0';
+    expandIcon.style.transform = 'rotate(0deg)';
+    updateDebugInfo();
+    updateUpdateStatus();
+  } else {
+    // Collapse
+    content.style.maxHeight = '0px';
+    content.style.padding = '0px';
+    header.style.borderRadius = '12px';
+    expandIcon.style.transform = 'rotate(180deg)';
+  }
+}
+
+function addConsoleLog(message, type = 'log') {
+  const console_el = document.getElementById('debug-console');
+  if (!console_el) return; // Prevent error if element not found
+  
+  const timestamp = new Date().toLocaleTimeString();
+  const icons = { 
+    log: '📝', 
+    success: '✅', 
+    error: '❌', 
+    warning: '⚠️',
+    info: 'ℹ️'
+  };
+  
+  const line = document.createElement('div');
+  line.style.color = {
+    'success': '#10b981',
+    'error': '#ef4444',
+    'warning': '#f59e0b',
+    'info': '#3b82f6',
+    'log': '#10b981'
+  }[type] || '#10b981';
+  
+  line.textContent = `${icons[type] || '📝'} [${timestamp}] ${message}`;
+  console_el.appendChild(line);
+  console_el.scrollTop = console_el.scrollHeight;
+  
+  console.log(`[${type.toUpperCase()}]`, message);
+}
+
+function updateDebugInfo() {
+  // Update SW Version
+  const swVerEl = document.getElementById('sw-version');
+  if (swVerEl) swVerEl.textContent = localStorage.getItem('sw-version') || 'Unknown';
+  
+  // Update Cache Name
+  const cacheNameEl = document.getElementById('cache-name');
+  if (cacheNameEl) cacheNameEl.textContent = localStorage.getItem('cache-name') || 'toko-pwa-v3';
+  
+  // Update Token status
+  const tokenStatusEl = document.getElementById('token-status');
+  if (tokenStatusEl) {
+    const token = localStorage.getItem('token_toko');
+    tokenStatusEl.textContent = token ? '✅ Valid' : '❌ None';
+  }
+  
+  // Update last update time
+  const lastUpdateEl = document.getElementById('last-update');
+  if (lastUpdateEl) {
+    const lastUpdate = localStorage.getItem('last-update-time');
+    lastUpdateEl.textContent = lastUpdate || 'Never';
+  }
+  
+  addConsoleLog('Debug info updated', 'info');
+}
+
+function testUpdateNotification() {
+  addConsoleLog('Testing update notification...', 'info');
+  
+  // Langsung trigger update notification tanpa perlu ubah SW
+  showUpdateNotification();
+  
+  addConsoleLog('Update notification triggered!', 'success');
+  
+  // Save timestamp
+  const now = new Date().toLocaleTimeString();
+  localStorage.setItem('last-update-time', now);
+  updateDebugInfo();
+}
+
+function testClearCache() {
+  addConsoleLog('Testing clear cache function...', 'warning');
+  
+  const confirmed = confirm('⚠️ Ini akan menghapus semua cache dan storage. Yakin?');
+  if (confirmed) {
+    addConsoleLog('Starting cache clear...', 'warning');
+    clearCacheAndReload();
+  } else {
+    addConsoleLog('Clear cache cancelled', 'log');
+  }
+}
+
+function setTestVersion() {
+  const versionInput = document.getElementById('version-input');
+  if (!versionInput) {
+    addConsoleLog('version-input element not found', 'error');
+    return;
+  }
+  
+  const newVersion = versionInput.value.trim();
+  
+  if (!newVersion) {
+    addConsoleLog('Please enter a version (e.g., v4.0)', 'error');
+    return;
+  }
+  
+  addConsoleLog(`Setting test version to: ${newVersion}`, 'info');
+  
+  // Save ke localStorage untuk testing
+  localStorage.setItem('test-version', newVersion);
+  localStorage.setItem('sw-version', newVersion);
+  
+  addConsoleLog(`✅ Version set to ${newVersion}. Restart app to apply.`, 'success');
+  
+  versionInput.value = '';
+  updateDebugInfo();
+}
+
+function checkSWStatus() {
+  addConsoleLog('Checking Service Worker status...', 'info');
+  
+  if (!navigator.serviceWorker) {
+    addConsoleLog('❌ Service Worker not supported', 'error');
+    return;
+  }
+  
+  navigator.serviceWorker.getRegistrations().then(registrations => {
+    if (registrations.length === 0) {
+      addConsoleLog('No Service Workers registered', 'warning');
+    } else {
+      registrations.forEach((reg, idx) => {
+        addConsoleLog(`SW ${idx + 1}: ${reg.scope}`, 'success');
+        if (reg.installing) addConsoleLog('  - Installing: Yes', 'info');
+        if (reg.waiting) addConsoleLog('  - Waiting: Yes', 'info');
+        if (reg.active) addConsoleLog('  - Active: Yes', 'success');
+      });
+    }
+  }).catch(err => {
+    addConsoleLog(`Error: ${err.message}`, 'error');
+  });
+}
+
+function showCaches() {
+  addConsoleLog('Checking caches...', 'info');
+  
+  if (!caches) {
+    addConsoleLog('❌ Cache API not supported', 'error');
+    return;
+  }
+  
+  caches.keys().then(cacheNames => {
+    if (cacheNames.length === 0) {
+      addConsoleLog('No caches found', 'warning');
+    } else {
+      addConsoleLog(`Found ${cacheNames.length} cache(s):`, 'info');
+      cacheNames.forEach(cacheName => {
+        addConsoleLog(`  📦 ${cacheName}`, 'success');
+        
+        // Get cache size
+        caches.open(cacheName).then(cache => {
+          cache.keys().then(keys => {
+            addConsoleLog(`     ↳ ${keys.length} files`, 'log');
+          });
+        });
+      });
+    }
+  }).catch(err => {
+    addConsoleLog(`Error: ${err.message}`, 'error');
+  });
+}
+
+// ============================================================
+// 📡 UPDATE STATUS CHECKING
+// ============================================================
+
+function updateUpdateStatus() {
+  const currentVersion = localStorage.getItem('sw-version') || 'v3.0';
+  const latestVersion = localStorage.getItem('latest-version') || 'v3.0';
+  
+  const currentEl = document.getElementById('current-version');
+  const latestEl = document.getElementById('latest-version');
+  const statusTextEl = document.getElementById('update-status-text');
+  const headerStatusEl = document.getElementById('header-status-text');
+  const statusIcon = document.getElementById('status-icon');
+  const expandIcon = document.getElementById('expand-icon');
+  
+  if (currentEl) currentEl.textContent = currentVersion;
+  if (latestEl) latestEl.textContent = latestVersion;
+  
+  const isUpToDate = currentVersion === latestVersion;
+  
+  if (isUpToDate) {
+    if (statusTextEl) {
+      statusTextEl.textContent = '✅ Terbaru';
+      statusTextEl.style.color = '#10b981';
+    }
+    if (statusIcon) statusIcon.textContent = '✅';
+    if (headerStatusEl) headerStatusEl.textContent = 'Up to date';
+  } else {
+    if (statusTextEl) {
+      statusTextEl.textContent = '🔄 Update Tersedia!';
+      statusTextEl.style.color = '#f59e0b';
+    }
+    if (statusIcon) statusIcon.textContent = '🔄';
+    if (headerStatusEl) headerStatusEl.textContent = 'Update available!';
+  }
+}
+
+function checkForUpdates() {
+  addConsoleLog('Checking for updates...', 'info');
+  
+  const lastCheckEl = document.getElementById('last-check-time');
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('id-ID');
+  
+  if (lastCheckEl) lastCheckEl.textContent = timeStr;
+  localStorage.setItem('last-check-time', timeStr);
+  
+  // Check if there's a test version set
+  const testVersion = localStorage.getItem('test-version');
+  if (testVersion && testVersion !== (localStorage.getItem('sw-version') || 'v3.0')) {
+    addConsoleLog(`✨ Update detected! ${testVersion} is available.`, 'success');
+    localStorage.setItem('latest-version', testVersion);
+    updateUpdateStatus();
+    
+    // Auto-show notification
+    setTimeout(() => {
+      showUpdateNotification();
+    }, 500);
+  } else {
+    addConsoleLog('✅ Already on latest version', 'success');
+    updateUpdateStatus();
+  }
+}
+
+// Initialize SW version tracking
+if (navigator.serviceWorker) {
+  navigator.serviceWorker.ready.then(reg => {
+    localStorage.setItem('sw-version', 'v3.0');
+    localStorage.setItem('cache-name', 'toko-pwa-v3');
+    console.log('✅ SW tracking initialized');
+  });
+}
+
+// Initialize testing panel on page load
+window.addEventListener('load', () => {
+  try {
+    addConsoleLog('Testing panel initialized', 'success');
+    updateDebugInfo();
+    updateUpdateStatus();
+  } catch (e) {
+    console.error('Error initializing testing panel:', e);
+  }
+});

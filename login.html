@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — Toko Akbar Jaya</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-primary: #4338ca;
+            --color-accent: #7c3aed;
+            --color-bg: #f1f0fb;
+            --color-text: #1e1b4b;
+            --color-border: #e0e7ff;
+            --color-error: #dc2626;
+            --color-success: #059669;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+            padding: 48px 32px;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        .logo-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #888;
+            font-weight: 400;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-text);
+            margin-bottom: 8px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--color-border);
+            border-radius: 8px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 4px rgba(67, 56, 202, 0.1);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'Outfit', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 12px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(67, 56, 202, 0.3);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            font-size: 14px;
+            display: none;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert.error {
+            background-color: #fee2e2;
+            color: var(--color-error);
+            border-left: 4px solid var(--color-error);
+        }
+
+        .alert.success {
+            background-color: #d1fae5;
+            color: var(--color-success);
+            border-left: 4px solid var(--color-success);
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            font-size: 14px;
+            color: var(--color-primary);
+            margin-top: 12px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--color-border);
+            border-top-color: var(--color-primary);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .demo-info {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--color-border);
+            font-size: 13px;
+            color: #888;
+            line-height: 1.6;
+        }
+
+        .demo-info strong {
+            color: var(--color-text);
+            display: block;
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <div class="logo-text">🏪 Toko Akbar Jaya</div>
+            <div class="subtitle">Sistem Manajemen Inventaris</div>
+        </div>
+
+        <div id="alert" class="alert"></div>
+
+        <form id="form-login">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Masukkan username" required autofocus>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Masukkan password" required>
+            </div>
+
+            <button type="submit" id="btn-login" class="btn-login">Masuk</button>
+        </form>
+
+        <div class="loading" id="loading">
+            <span class="spinner"></span>Sedang login...
+        </div>
+
+        <div class="demo-info">
+            <strong>🔧 Demo Account:</strong>
+            Username: <code style="background: #f3f4f6; padding: 2px 6px; border-radius: 4px;">admin</code><br>
+            Password: <code style="background: #f3f4f6; padding: 2px 6px; border-radius: 4px;">12345</code>
+        </div>
+    </div>
+
+    <script>
+        // Tentukan base URL berdasarkan domain
+        let baseUrl;
+        
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            // Localhost - gunakan http://localhost
+            baseUrl = 'http://localhost/toko-PBP-01';
+        } else {
+            // Hosting - gunakan https
+            baseUrl = 'https://tokoakbar.infinityfree.me';
+        }
+        
+        console.log('🌐 Base URL detected:', baseUrl);
+
+        const formLogin = document.getElementById('form-login');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const btnLogin = document.getElementById('btn-login');
+        const alertEl = document.getElementById('alert');
+        const loadingEl = document.getElementById('loading');
+
+        // Cek apakah sudah login sebelumnya, langsung ke index
+        if (localStorage.getItem('token_toko')) {
+            window.location.href = 'index.html';
+        }
+
+        formLogin.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value;
+
+            if (!username || !password) {
+                showAlert('error', 'Username dan Password harus diisi!');
+                return;
+            }
+
+            // Tampilkan loading
+            btnLogin.disabled = true;
+            loadingEl.classList.add('show');
+            hideAlert();
+
+            try {
+                console.log('📤 Sending login request to:', `${baseUrl}/api-toko/login.php`);
+                
+                const response = await fetch(`${baseUrl}/api-toko/login.php`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        password: password
+                    })
+                });
+
+                console.log('📥 Response status:', response.status);
+                
+                const result = await response.json();
+                console.log('📦 Response data:', result);
+
+                if (result.status === 'success') {
+                    // Simpan token ke localStorage
+                    localStorage.setItem('token_toko', result.token);
+                    console.log('✅ Token saved:', result.token);
+                    
+                    showAlert('success', '✅ ' + result.pesan);
+                    
+                    // Redirect ke halaman utama setelah 1 detik
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1000);
+                } else {
+                    showAlert('error', '❌ ' + result.pesan);
+                    btnLogin.disabled = false;
+                    loadingEl.classList.remove('show');
+                }
+            } catch (error) {
+                console.error('❌ Fetch error:', error);
+                showAlert('error', '❌ Terjadi kesalahan. Periksa koneksi atau URL API Anda!');
+                btnLogin.disabled = false;
+                loadingEl.classList.remove('show');
+            }
+        });
+
+        function showAlert(type, message) {
+            alertEl.className = `alert ${type} show`;
+            alertEl.textContent = message;
+        }
+
+        function hideAlert() {
+            alertEl.classList.remove('show');
+        }
+
+        // Clear alert saat user mulai mengetik
+        usernameInput.addEventListener('focus', hideAlert);
+        passwordInput.addEventListener('focus', hideAlert);
+    </script>
+</body>
+</html>

@@ -930,6 +930,10 @@
                     <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                     Reset
                 </button>
+                <button class="btn-header-action" onclick="logout()" title="Logout">
+                    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                    Logout
+                </button>
             </div>
 
         </div>
@@ -1140,6 +1144,138 @@
 
 </div>
 <!-- /main-wrap -->
+
+<!-- =====================================================
+     TESTING & DEBUG SECTION
+===================================================== -->
+<div id="testing-section" style="display: block; padding: 0; background: transparent; margin: 0; width: 100%; box-sizing: border-box; transition: all 0.3s ease;">
+    <div style="max-width: 1000px; margin: 0 auto; padding: 0 16px;">
+        
+        <!-- Collapsible Header -->
+        <div id="testing-header" onclick="toggleTestingPanel()" style="
+            background: linear-gradient(135deg, #4338ca, #6366f1);
+            color: white;
+            padding: 14px 16px;
+            border-radius: 12px 12px 0 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            user-select: none;
+        ">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span id="status-icon" style="font-size: 18px;">✅</span>
+                <div>
+                    <div style="font-weight: 700; font-size: 14px;">🧪 Testing & Debug Tools</div>
+                    <div style="font-size: 11px; opacity: 0.8;" id="header-status-text">Up to date</div>
+                </div>
+            </div>
+            <span id="expand-icon" style="font-size: 20px; transition: transform 0.3s ease;">▼</span>
+        </div>
+
+        <!-- Expandable Content -->
+        <div id="testing-content" style="
+            background: white;
+            padding: 16px;
+            border-radius: 0 0 12px 12px;
+            border-left: 4px solid #4338ca;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            max-height: 2000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        ">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-bottom: 16px;">
+                
+                <!-- Update Status Card -->
+                <div style="background: linear-gradient(135deg, #ede9fe, #faf9ff); padding: 14px; border-radius: 8px; border-left: 4px solid #4338ca;">
+                    <div style="font-weight: 600; margin-bottom: 8px; color: #1f2937; font-size: 14px;">📡 Status Update Aplikasi</div>
+                    <div style="font-size: 13px; line-height: 1.8; color: #4b5563; font-family: monospace;">
+                        <div style="margin: 6px 0; display: flex; justify-content: space-between;">
+                            <span>Versi Saat Ini:</span>
+                            <strong id="current-version">v3.0</strong>
+                        </div>
+                        <div style="margin: 6px 0; display: flex; justify-content: space-between;">
+                            <span>Versi Terbaru:</span>
+                            <strong id="latest-version">v3.0</strong>
+                        </div>
+                        <div style="margin: 6px 0; display: flex; justify-content: space-between;">
+                            <span>Status:</span>
+                            <strong id="update-status-text" style="color: #10b981;">✅ Terbaru</strong>
+                        </div>
+                        <div style="margin: 6px 0; display: flex; justify-content: space-between;">
+                            <span>Check Terakhir:</span>
+                            <strong id="last-check-time">—</strong>
+                        </div>
+                    </div>
+                    <button onclick="checkForUpdates()" style="width: 100%; margin-top: 10px; background: #4338ca; color: white; border: none; padding: 8px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px;">
+                        Cek Update Sekarang
+                    </button>
+                </div>
+
+                <!-- SW Status -->
+                <div style="background: #f9fafb; padding: 12px; border-radius: 8px; border-left: 3px solid #3b82f6;">
+                    <div style="font-weight: 600; margin-bottom: 8px; color: #1f2937; font-size: 14px;">📊 Status Aplikasi</div>
+                    <div style="font-size: 13px; line-height: 1.6; color: #4b5563; font-family: monospace;">
+                        <div style="margin: 4px 0;">SW Version: <strong id="sw-version">Loading...</strong></div>
+                        <div style="margin: 4px 0;">Cache Name: <strong id="cache-name">Loading...</strong></div>
+                        <div style="margin: 4px 0;">Token: <strong id="token-status">Loading...</strong></div>
+                        <div style="margin: 4px 0;">Updated: <strong id="last-update">Never</strong></div>
+                    </div>
+                </div>
+
+                <!-- Test Update Notification -->
+                <div style="background: #f9fafb; padding: 12px; border-radius: 8px; border-left: 3px solid #10b981;">
+                    <div style="font-weight: 600; margin-bottom: 8px; color: #1f2937; font-size: 14px;">✨ Test Notifikasi</div>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button onclick="testUpdateNotification()" style="background: #10b981; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px;">
+                            Test Update Notif
+                        </button>
+                        <button onclick="testClearCache()" style="background: #f59e0b; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px;">
+                            Test Clear Cache
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Update SW Version -->
+                <div style="background: #f9fafb; padding: 12px; border-radius: 8px; border-left: 3px solid #f59e0b;">
+                    <div style="font-weight: 600; margin-bottom: 8px; color: #1f2937; font-size: 14px;">🔄 Update Version</div>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <input type="text" id="version-input" placeholder="e.g. v4.0" style="flex: 1; min-width: 100px; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 12px;">
+                        <button onclick="setTestVersion()" style="background: #8b5cf6; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px;">
+                            Set
+                        </button>
+                    </div>
+                    <div style="font-size: 11px; color: #666; margin-top: 8px;">
+                        ⚠️ Ini akan trigger update detection saat SW re-register
+                    </div>
+                </div>
+
+                <!-- SW Check -->
+                <div style="background: #f9fafb; padding: 12px; border-radius: 8px; border-left: 3px solid #ec4899;">
+                    <div style="font-weight: 600; margin-bottom: 8px; color: #1f2937; font-size: 14px;">🔍 SW Check</div>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button onclick="checkSWStatus()" style="background: #ec4899; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px;">
+                            Check SW Status
+                        </button>
+                        <button onclick="showCaches()" style="background: #6366f1; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px;">
+                            List Caches
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Console Output -->
+            <div style="margin-top: 16px; background: #1f2937; color: #10b981; padding: 12px; border-radius: 8px; font-family: monospace; font-size: 12px; max-height: 200px; overflow-y: auto; border: 1px solid #374151;" id="debug-console">
+                <div style="color: #6ee7b7;">🔧 Debug Console Ready...</div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
 
 <!-- =====================================================
      FOOTER
