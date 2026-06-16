@@ -272,7 +272,7 @@
 
         // Cek apakah sudah login sebelumnya, langsung ke index
         if (localStorage.getItem('token_toko')) {
-            window.location.href = 'index.html';
+            window.location.href = '/app-toko/index.html';
         }
 
         formLogin.addEventListener('submit', async function(e) {
@@ -319,7 +319,7 @@
                     
                     // Redirect ke halaman utama setelah 1 detik
                     setTimeout(() => {
-                        window.location.href = 'index.html';
+                        window.location.href = '/app-toko/index.html';
                     }, 1000);
                 } else {
                     showAlert('error', '❌ ' + result.pesan);

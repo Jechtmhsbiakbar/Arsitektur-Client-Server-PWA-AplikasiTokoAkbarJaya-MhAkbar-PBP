@@ -1,0 +1,13 @@
+Options -Indexes
+RewriteEngine On
+
+# Root domain → tampilkan app-toko/index.html (URL tidak berubah di browser)
+RewriteRule ^$ app-toko/index.html [L]
+
+# Semua path lain yang bukan file/folder nyata dan bukan api-toko/ atau app-toko/
+# → arahkan ke app-toko/index.html (support PWA routing)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/api-toko/
+RewriteCond %{REQUEST_URI} !^/app-toko/
+RewriteRule ^(.*)$ app-toko/index.html [L]

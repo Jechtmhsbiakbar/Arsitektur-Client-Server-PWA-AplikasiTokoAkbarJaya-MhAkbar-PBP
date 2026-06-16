@@ -2,8 +2,8 @@
   "name": "Toko Akbar Jaya",
   "short_name": "Toko Akbar Jaya",
   "description": "Aplikasi pencatat barang PWA",
-  "start_url": "index.html",
-  "scope": "./",
+  "start_url": "/app-toko/index.html",
+  "scope": "/app-toko/",
   "display": "standalone",
   "display_override": ["window-controls-overlay", "standalone"],
   "theme_color": "#4338ca",
@@ -11,13 +11,13 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "icons/icon-192x192.png",
+      "src": "/app-toko/icons/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "icons/icon-512x512.png",
+      "src": "/app-toko/icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"

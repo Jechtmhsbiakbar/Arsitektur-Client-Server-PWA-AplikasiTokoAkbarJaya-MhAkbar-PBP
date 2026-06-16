@@ -4,8 +4,7 @@
 const myToken = localStorage.getItem('token_toko');
 
 if (!myToken) {
-    alert('❌ Anda harus login terlebih dahulu!');
-    window.location.href = 'login.html';
+    window.location.href = '/app-toko/login.html';
 }
 
 console.log('✅ Token ditemukan, user authorized');
@@ -69,15 +68,15 @@ function renderTable(dataToRender) {
   const mobileCardList = document.getElementById("mobile-card-list");
   let baris       = "";
   let mobileCards = "";
- 
+
   if (dataToRender.length === 0) {
     baris       = `<tr><td colspan="5" class="text-center text-muted py-4">Tidak ada barang ditemukan</td></tr>`;
     mobileCards = `<div style="padding:60px 24px;text-align:center;"><div style="font-size:.88rem;color:var(--text-sub);">Tidak ada barang ditemukan</div></div>`;
   } else {
     dataToRender.forEach((barang, index) => {
       const nomor = index + 1;
- 
-      // ── Buat HTML thumbnail gambar ──────────────────────────
+
+      // ── Buat HTML thumbnail gambar ──
       let gambarHTML;
       if (barang.gambar) {
         const urlGambar = `${baseUrl}/api-toko/uploads/${barang.gambar}`;
@@ -89,7 +88,7 @@ function renderTable(dataToRender) {
       } else {
         gambarHTML = `<div style="width:52px;height:52px;background:#f3f4f6;border-radius:8px;border:2px dashed #d1d5db;display:flex;align-items:center;justify-content:center;font-size:1.3rem;">📦</div>`;
       }
- 
+
       // ── Desktop row (5 kolom: No, Foto, Nama, Harga, Aksi) ──
       baris += `
         <tr>
@@ -102,8 +101,8 @@ function renderTable(dataToRender) {
             <button class="btn btn-sm btn-danger"  onclick="deleteBarang(${barang.id})">🗑️ Hapus</button>
           </td>
         </tr>`;
- 
-      // ── Mobile card ─────────────────────────────────────────
+
+      // ── Mobile card ──
       mobileCards += `
         <div class="mobile-card">
           <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px;">
@@ -125,11 +124,10 @@ function renderTable(dataToRender) {
         </div>`;
     });
   }
- 
+
   tbody.innerHTML = baris;
   if (mobileCardList) mobileCardList.innerHTML = mobileCards;
 }
- 
 
 function loadDataBarang() {
   console.log("🔄 Loading data barang...");
@@ -144,7 +142,7 @@ function loadDataBarang() {
       if (response.status === 401) {
         console.error("❌ Token invalid atau expired. Redirect ke login.");
         localStorage.removeItem('token_toko');
-        window.location.href = 'login.html';
+        window.location.href = '/app-toko/login.html';
         return;
       }
       
@@ -202,7 +200,7 @@ function deleteBarang(id) {
     if (response.status === 401) {
       console.error("❌ Token invalid atau expired. Redirect ke login.");
       localStorage.removeItem('token_toko');
-      window.location.href = 'login.html';
+      window.location.href = '/app-toko/login.html';
       return;
     }
     
@@ -304,47 +302,44 @@ function clearFormAndResetMode() {
 // ============================================================
 function submitTambahBarang(event) {
   event.preventDefault();
- 
+
   const namaBarang  = document.getElementById("nama-barang").value.trim();
   const hargaBarang = parseInt(document.getElementById("harga-barang").value);
- 
+
   if (!namaBarang || !hargaBarang || hargaBarang < 1) {
     showAlert("warning", "⚠️ Perhatian!", "Nama barang dan harga wajib diisi dengan benar.");
     return;
   }
- 
-  // Ambil input gambar (dipakai di kedua mode)
+
   const inputGambar = document.getElementById("input-gambar");
- 
+
   if (editMode && editingBarangId !== null) {
-    // ── MODE EDIT ──────────────────────────────────────────────
+    // ── MODE EDIT: FormData supaya bisa kirim gambar ──
     console.log("✏️ Submitting edit untuk ID:", editingBarangId);
- 
+
     const fd = new FormData();
     fd.append("token",       myToken);
     fd.append("id",          editingBarangId);
     fd.append("nama_barang", namaBarang);
     fd.append("harga",       hargaBarang);
- 
+
     if (inputGambar && inputGambar.files.length > 0) {
       fd.append("gambar", inputGambar.files[0]);
       console.log("📷 Gambar baru:", inputGambar.files[0].name);
     }
- 
-    // method POST bukan PUT — PHP tidak bisa baca $_FILES dari PUT
+
+    // POST bukan PUT — PHP tidak bisa baca $_FILES dari PUT
     fetch(`${baseUrl}/api-toko/update_barang.php`, {
       method: "POST",
-      body: fd           // JANGAN tambahkan headers Content-Type
+      body: fd  // JANGAN set headers Content-Type
     })
     .then(response => {
       if (response.status === 401) {
-        // Jangan langsung redirect — cek dulu response body-nya
         return response.json().then(err => {
           console.error("❌ 401 dari update:", err);
-          // Hanya redirect jika benar-benar token invalid (bukan error lain)
           if (err.pesan && err.pesan.includes("Token")) {
             localStorage.removeItem('token_toko');
-            window.location.href = 'login.html';
+            window.location.href = '/app-toko/login.html';
           } else {
             showAlert("error", "❌ Gagal!", err.pesan || err.message || "Akses ditolak.");
           }
@@ -374,24 +369,24 @@ function submitTambahBarang(event) {
       console.error("❌ Error update:", error);
       showAlert("error", "❌ Gagal!", "Terjadi kesalahan saat memperbarui data.");
     });
- 
+
   } else {
-    // ── MODE TAMBAH ────────────────────────────────────────────
+    // ── MODE TAMBAH: FormData supaya bisa kirim gambar ──
     console.log("➕ Submitting tambah barang baru");
- 
+
     const fd = new FormData();
     fd.append("token",       myToken);
     fd.append("nama_barang", namaBarang);
     fd.append("harga",       hargaBarang);
- 
+
     if (inputGambar && inputGambar.files.length > 0) {
       fd.append("gambar", inputGambar.files[0]);
       console.log("📷 Gambar:", inputGambar.files[0].name);
     }
- 
+
     fetch(`${baseUrl}/api-toko/tambah_barang.php`, {
       method: "POST",
-      body: fd           // JANGAN tambahkan headers Content-Type
+      body: fd  // JANGAN set headers Content-Type
     })
     .then(response => {
       if (response.status === 401) {
@@ -399,7 +394,7 @@ function submitTambahBarang(event) {
           console.error("❌ 401 dari tambah:", err);
           if (err.pesan && err.pesan.includes("Token")) {
             localStorage.removeItem('token_toko');
-            window.location.href = 'login.html';
+            window.location.href = '/app-toko/login.html';
           } else {
             showAlert("error", "❌ Gagal!", err.pesan || err.message || "Akses ditolak.");
           }
@@ -462,33 +457,13 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
-document.addEventListener('DOMContentLoaded', () => {
-    // Listener preview gambar — jalankan setelah DOM siap
-    const inputGambar = document.getElementById('input-gambar');
-    if (inputGambar) {
-        inputGambar.addEventListener('change', function () {
-            const file = this.files[0]; // Ambil file pertama yang dipilih
-            const previewDiv = document.getElementById('preview-gambar');
-            const imgPreview = document.getElementById('img-preview');
- 
-            if (file) {
-                // Buat URL sementara dari file lokal untuk ditampilkan di browser
-                const objectURL = URL.createObjectURL(file);
-                imgPreview.src = objectURL;
-                previewDiv.style.display = 'block'; // Tampilkan div preview
-            } else {
-                previewDiv.style.display = 'none'; // Sembunyikan jika tidak ada file
-            }
-        });
-    }
-});
 
 // ============================================================
 // 🛠️ SERVICE WORKER REGISTRATION & UPDATE DETECTION
 // ============================================================
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("sw.js")
+    navigator.serviceWorker.register("/app-toko/sw.js")
       .then((reg) => {
         console.log("✅ SW Terdaftar:", reg.scope);
         
@@ -716,7 +691,7 @@ async function clearCacheAndReload() {
     
     // 9️⃣ RELOAD HALAMAN DENGAN CACHE BUSTING
     const timestamp = new Date().getTime();
-    window.location.href = window.location.href.split('?')[0] + '?timestamp=' + timestamp;
+    window.location.href = '/app-toko/index.html?timestamp=' + timestamp;
     
   } catch (error) {
     console.error("❌ Error during cache clear:", error);
@@ -806,7 +781,7 @@ function logout() {
     editingBarangId = null;
     
     // Redirect ke login page
-    window.location.href = 'login.html';
+    window.location.href = '/app-toko/login.html';
   }
 }
 
