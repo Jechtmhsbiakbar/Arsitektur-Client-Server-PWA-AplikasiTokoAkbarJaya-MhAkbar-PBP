@@ -17,7 +17,7 @@ require_once "koneksi.php";
 // require_once "auth_helper.php";
 // requireValidToken($koneksi);
 
-$query = "SELECT id, nama_barang, harga FROM barang ORDER BY id ASC";
+$query = "SELECT id, nama_barang, harga, gambar FROM barang ORDER BY id ASC";
 $hasil = mysqli_query($koneksi, $query);
 
 if (!$hasil) {

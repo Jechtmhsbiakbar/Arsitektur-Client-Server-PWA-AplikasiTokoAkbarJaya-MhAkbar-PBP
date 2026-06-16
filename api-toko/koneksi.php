@@ -4,17 +4,20 @@
 // Header HTTP diatur masing-masing di file endpoint.
 // ============================================================
 
-// Koneksi untuk localhost XAMPP
-$host = "localhost";
-$user = "root";
-$pass = "";
-$db   = "db_toko";
-
-// Koneksi untuk hosting InfinityFree (uncomment jika deploy)
-// $host = "sql101.infinityfree.com";
-// $user = "if0_41799381";
-// $pass = "2B9LgM34ErW";
-// $db   = "if0_41799381_db_toko";
+// Deteksi otomatis: localhost atau hosting
+if ($_SERVER['HTTP_HOST'] === 'localhost' || $_SERVER['HTTP_HOST'] === '127.0.0.1') {
+    // ── Koneksi LOCALHOST (XAMPP) ──
+    $host = "localhost";
+    $user = "root";
+    $pass = "";
+    $db   = "db_toko";
+} else {
+    // ── Koneksi HOSTING InfinityFree ──
+    $host = "sql101.infinityfree.com";
+    $user = "if0_41799381";
+    $pass = "2B9LgM34ErW";
+    $db   = "if0_41799381_db_toko";
+}
 
 $koneksi = mysqli_connect($host, $user, $pass, $db);
 

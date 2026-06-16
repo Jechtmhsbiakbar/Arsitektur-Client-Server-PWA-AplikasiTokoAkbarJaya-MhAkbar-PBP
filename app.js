@@ -65,55 +65,71 @@ function updateStats() {
 }
 
 function renderTable(dataToRender) {
-  const tbody = document.getElementById("isi-tabel");
+  const tbody          = document.getElementById("isi-tabel");
   const mobileCardList = document.getElementById("mobile-card-list");
-  let baris = "";
+  let baris       = "";
   let mobileCards = "";
-
+ 
   if (dataToRender.length === 0) {
-    baris = `<tr><td colspan="5" class="text-center text-muted py-4">Tidak ada barang ditemukan</td></tr>`;
+    baris       = `<tr><td colspan="5" class="text-center text-muted py-4">Tidak ada barang ditemukan</td></tr>`;
     mobileCards = `<div style="padding:60px 24px;text-align:center;"><div style="font-size:.88rem;color:var(--text-sub);">Tidak ada barang ditemukan</div></div>`;
   } else {
     dataToRender.forEach((barang, index) => {
-      const nomor = index + 1; // Nomor urut tampilan, selalu 1 s/d n
-
-      // Desktop table row
+      const nomor = index + 1;
+ 
+      // ── Buat HTML thumbnail gambar ──────────────────────────
+      let gambarHTML;
+      if (barang.gambar) {
+        const urlGambar = `${baseUrl}/api-toko/uploads/${barang.gambar}`;
+        gambarHTML = `<img
+          src="${urlGambar}"
+          alt="${barang.nama_barang}"
+          style="width:52px;height:52px;object-fit:cover;border-radius:8px;border:2px solid #e0e7ff;display:block;"
+          onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<div style=&quot;width:52px;height:52px;background:#f3f4f6;border-radius:8px;border:2px dashed #d1d5db;display:flex;align-items:center;justify-content:center;font-size:1.3rem;&quot;>📦</div>')">`;
+      } else {
+        gambarHTML = `<div style="width:52px;height:52px;background:#f3f4f6;border-radius:8px;border:2px dashed #d1d5db;display:flex;align-items:center;justify-content:center;font-size:1.3rem;">📦</div>`;
+      }
+ 
+      // ── Desktop row (5 kolom: No, Foto, Nama, Harga, Aksi) ──
       baris += `
         <tr>
-            <td class="ps-4 fw-bold text-muted">${nomor}</td>
-            <td class="fw-semibold">${barang.nama_barang}</td>
-            <td class="price-tag">Rp ${parseInt(barang.harga).toLocaleString("id-ID")}</td>
-            <td>
-                <button class="btn btn-sm btn-warning" onclick="editBarang(${barang.id})">✏️ Edit</button>
-                <button class="btn btn-sm btn-danger" onclick="deleteBarang(${barang.id})">🗑️ Hapus</button>
-            </td>
+          <td class="ps-4 fw-bold text-muted">${nomor}</td>
+          <td style="vertical-align:middle;padding:8px 12px;">${gambarHTML}</td>
+          <td class="fw-semibold">${barang.nama_barang}</td>
+          <td class="price-tag">Rp ${parseInt(barang.harga).toLocaleString("id-ID")}</td>
+          <td>
+            <button class="btn btn-sm btn-warning" onclick="editBarang(${barang.id})">✏️ Edit</button>
+            <button class="btn btn-sm btn-danger"  onclick="deleteBarang(${barang.id})">🗑️ Hapus</button>
+          </td>
         </tr>`;
-      
-      // Mobile card
+ 
+      // ── Mobile card ─────────────────────────────────────────
       mobileCards += `
         <div class="mobile-card">
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;">
-                <div style="flex:1;">
-                    <div style="font-size:.72rem;color:var(--text-sub);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">No. ${nomor}</div>
-                    <div style="font-size:.95rem;font-weight:700;color:var(--text-main);">${barang.nama_barang}</div>
-                </div>
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px;">
+            ${gambarHTML}
+            <div style="flex:1;">
+              <div style="font-size:.72rem;color:var(--text-sub);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">No. ${nomor}</div>
+              <div style="font-size:.95rem;font-weight:700;color:var(--text-main);">${barang.nama_barang}</div>
             </div>
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;">
-                <div style="background:#ede9fe;color:var(--primary);border-radius:20px;padding:4px 12px;font-weight:700;font-size:.82rem;">Rp ${parseInt(barang.harga).toLocaleString("id-ID")}</div>
+          </div>
+          <div style="margin-bottom:12px;">
+            <div style="background:#ede9fe;color:var(--primary);border-radius:20px;padding:4px 12px;font-weight:700;font-size:.82rem;display:inline-block;">
+              Rp ${parseInt(barang.harga).toLocaleString("id-ID")}
             </div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                <button class="btn btn-sm btn-warning" onclick="editBarang(${barang.id})" style="flex:1;">✏️ Edit</button>
-                <button class="btn btn-sm btn-danger" onclick="deleteBarang(${barang.id})" style="flex:1;">🗑️ Hapus</button>
-            </div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-sm btn-warning" onclick="editBarang(${barang.id})" style="flex:1;">✏️ Edit</button>
+            <button class="btn btn-sm btn-danger"  onclick="deleteBarang(${barang.id})" style="flex:1;">🗑️ Hapus</button>
+          </div>
         </div>`;
     });
   }
-  
+ 
   tbody.innerHTML = baris;
-  if (mobileCardList) {
-    mobileCardList.innerHTML = mobileCards;
-  }
+  if (mobileCardList) mobileCardList.innerHTML = mobileCards;
 }
+ 
 
 function loadDataBarang() {
   console.log("🔄 Loading data barang...");
@@ -287,95 +303,129 @@ function clearFormAndResetMode() {
 // 💾 SUBMIT FORM — TAMBAH ATAU EDIT
 // ============================================================
 function submitTambahBarang(event) {
-  event.preventDefault(); // ← WAJIB: cegah reload halaman
-
-  const namaBarang = document.getElementById("nama-barang").value.trim();
+  event.preventDefault();
+ 
+  const namaBarang  = document.getElementById("nama-barang").value.trim();
   const hargaBarang = parseInt(document.getElementById("harga-barang").value);
-
+ 
   if (!namaBarang || !hargaBarang || hargaBarang < 1) {
     showAlert("warning", "⚠️ Perhatian!", "Nama barang dan harga wajib diisi dengan benar.");
     return;
   }
-
+ 
+  // Ambil input gambar (dipakai di kedua mode)
+  const inputGambar = document.getElementById("input-gambar");
+ 
   if (editMode && editingBarangId !== null) {
-    // ── MODE EDIT: kirim ke update_barang.php ──
+    // ── MODE EDIT ──────────────────────────────────────────────
     console.log("✏️ Submitting edit untuk ID:", editingBarangId);
-
+ 
+    const fd = new FormData();
+    fd.append("token",       myToken);
+    fd.append("id",          editingBarangId);
+    fd.append("nama_barang", namaBarang);
+    fd.append("harga",       hargaBarang);
+ 
+    if (inputGambar && inputGambar.files.length > 0) {
+      fd.append("gambar", inputGambar.files[0]);
+      console.log("📷 Gambar baru:", inputGambar.files[0].name);
+    }
+ 
+    // method POST bukan PUT — PHP tidak bisa baca $_FILES dari PUT
     fetch(`${baseUrl}/api-toko/update_barang.php`, {
-      method: "PUT",
-      headers: getHeaders(),
-      body: JSON.stringify(withToken({
-        id: editingBarangId,
-        nama_barang: namaBarang,
-        harga: hargaBarang
-      }))
+      method: "POST",
+      body: fd           // JANGAN tambahkan headers Content-Type
     })
-    .then((response) => {
-      // Jika 401, token invalid
+    .then(response => {
       if (response.status === 401) {
-        console.error("❌ Token invalid atau expired. Redirect ke login.");
-        localStorage.removeItem('token_toko');
-        window.location.href = 'login.html';
-        return;
+        // Jangan langsung redirect — cek dulu response body-nya
+        return response.json().then(err => {
+          console.error("❌ 401 dari update:", err);
+          // Hanya redirect jika benar-benar token invalid (bukan error lain)
+          if (err.pesan && err.pesan.includes("Token")) {
+            localStorage.removeItem('token_toko');
+            window.location.href = 'login.html';
+          } else {
+            showAlert("error", "❌ Gagal!", err.pesan || err.message || "Akses ditolak.");
+          }
+          return null;
+        });
       }
-      
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
       return response.json();
     })
-    .then((result) => {
-      if (!result) return; // Exit jika sudah redirect ke login
-      
+    .then(result => {
+      if (!result) return;
       console.log("✅ Update result:", result);
       if (result.status === "success") {
         closeModalTambah();
         showAlert("success", "✅ Berhasil!", "Data barang berhasil diperbarui.");
+        if (inputGambar) {
+          inputGambar.value = "";
+          const prev = document.getElementById('preview-gambar');
+          if (prev) prev.style.display = 'none';
+        }
         setTimeout(() => loadDataBarang(), 800);
       } else {
         showAlert("error", "❌ Gagal!", result.message || "Gagal memperbarui barang.");
       }
     })
-    .catch((error) => {
+    .catch(error => {
       console.error("❌ Error update:", error);
       showAlert("error", "❌ Gagal!", "Terjadi kesalahan saat memperbarui data.");
     });
-
+ 
   } else {
-    // ── MODE TAMBAH: kirim ke tambah_barang.php ──
+    // ── MODE TAMBAH ────────────────────────────────────────────
     console.log("➕ Submitting tambah barang baru");
-
+ 
+    const fd = new FormData();
+    fd.append("token",       myToken);
+    fd.append("nama_barang", namaBarang);
+    fd.append("harga",       hargaBarang);
+ 
+    if (inputGambar && inputGambar.files.length > 0) {
+      fd.append("gambar", inputGambar.files[0]);
+      console.log("📷 Gambar:", inputGambar.files[0].name);
+    }
+ 
     fetch(`${baseUrl}/api-toko/tambah_barang.php`, {
       method: "POST",
-      headers: getHeaders(),
-      body: JSON.stringify(withToken({
-        nama_barang: namaBarang,
-        harga: hargaBarang
-      }))
+      body: fd           // JANGAN tambahkan headers Content-Type
     })
-    .then((response) => {
-      // Jika 401, token invalid
+    .then(response => {
       if (response.status === 401) {
-        console.error("❌ Token invalid atau expired. Redirect ke login.");
-        localStorage.removeItem('token_toko');
-        window.location.href = 'login.html';
-        return;
+        return response.json().then(err => {
+          console.error("❌ 401 dari tambah:", err);
+          if (err.pesan && err.pesan.includes("Token")) {
+            localStorage.removeItem('token_toko');
+            window.location.href = 'login.html';
+          } else {
+            showAlert("error", "❌ Gagal!", err.pesan || err.message || "Akses ditolak.");
+          }
+          return null;
+        });
       }
-      
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
       return response.json();
     })
-    .then((result) => {
-      if (!result) return; // Exit jika sudah redirect ke login
-      
+    .then(result => {
+      if (!result) return;
       console.log("✅ Tambah result:", result);
       if (result.status === "success") {
         closeModalTambah();
         showAlert("success", "✅ Berhasil!", "Barang baru berhasil ditambahkan.");
+        if (inputGambar) {
+          inputGambar.value = "";
+          const prev = document.getElementById('preview-gambar');
+          if (prev) prev.style.display = 'none';
+        }
         setTimeout(() => loadDataBarang(), 800);
       } else {
         showAlert("error", "❌ Gagal!", result.message || "Gagal menambahkan barang.");
       }
     })
-    .catch((error) => {
+    .catch(error => {
       console.error("❌ Error tambah:", error);
       showAlert("error", "❌ Gagal!", "Terjadi kesalahan saat menambahkan data.");
     });
@@ -411,6 +461,26 @@ window.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+});
+document.addEventListener('DOMContentLoaded', () => {
+    // Listener preview gambar — jalankan setelah DOM siap
+    const inputGambar = document.getElementById('input-gambar');
+    if (inputGambar) {
+        inputGambar.addEventListener('change', function () {
+            const file = this.files[0]; // Ambil file pertama yang dipilih
+            const previewDiv = document.getElementById('preview-gambar');
+            const imgPreview = document.getElementById('img-preview');
+ 
+            if (file) {
+                // Buat URL sementara dari file lokal untuk ditampilkan di browser
+                const objectURL = URL.createObjectURL(file);
+                imgPreview.src = objectURL;
+                previewDiv.style.display = 'block'; // Tampilkan div preview
+            } else {
+                previewDiv.style.display = 'none'; // Sembunyikan jika tidak ada file
+            }
+        });
+    }
 });
 
 // ============================================================
