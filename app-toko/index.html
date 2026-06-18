@@ -1129,7 +1129,44 @@
         </div>
 
         <!-- Mobile Card List — diisi oleh app.js via renderTable() -->
-        <div class="mobile-list" id="mobile-card-list"></div>
+<div class="mobile-list" id="mobile-card-list"></div>
+
+<!-- ============================================================ -->
+<!-- 📄 PAGINATION CONTROLS (BARU - untuk Live Search & Pagination) -->
+<!-- ============================================================ -->
+<div class="pagination-wrap" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;padding:14px 18px;background:linear-gradient(135deg,#f9fafb 0%,#f3f4f6 100%);border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb;">
+
+    <!-- Info Halaman -->
+    <div id="page-info" style="font-family:'Outfit',sans-serif;font-size:13.5px;font-weight:600;color:#4b5563;display:flex;align-items:center;gap:8px;">
+        <span style="font-size:16px;">📄</span>
+        <span>Halaman <strong id="current-page-display" style="color:#6366f1;">1</strong> dari <strong id="total-page-display" style="color:#6366f1;">1</strong></span>
+        <span style="color:#9ca3af;">•</span>
+        <span>Total: <strong id="total-data-display" style="color:#059669;">0</strong> Data</span>
+    </div>
+
+    <!-- Tombol Prev & Next -->
+    <div style="display:flex;gap:8px;align-items:center;">
+        <button 
+            id="btn-prev" 
+            onclick="prevPage()" 
+            disabled
+            style="padding:8px 16px;background:#e5e7eb;color:#9ca3af;border:1px solid #d1d5db;border-radius:8px;font-weight:600;font-size:13px;font-family:'Outfit',sans-serif;cursor:not-allowed;transition:all .2s ease;display:flex;align-items:center;gap:6px;">
+            <span>⬅</span> Prev
+        </button>
+        
+        <button 
+            id="btn-next" 
+            onclick="nextPage()" 
+            disabled
+            style="padding:8px 16px;background:#e5e7eb;color:#9ca3af;border:1px solid #d1d5db;border-radius:8px;font-weight:600;font-size:13px;font-family:'Outfit',sans-serif;cursor:not-allowed;transition:all .2s ease;display:flex;align-items:center;gap:6px;">
+            Next <span>➡</span>
+        </button>
+    </div>
+</div>
+<!-- /pagination-wrap -->
+
+<!-- Footer -->
+<div class="table-footer">
 
         <!-- Footer -->
         <div class="table-footer">

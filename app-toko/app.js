@@ -25,9 +25,21 @@ console.log('🌐 Base URL:', baseUrl);
 // ============================================================
 // 🛒 DATA FETCHING & STATE MANAGEMENT
 // ============================================================
-let allBarangData = []; // Store semua data untuk search
-let editMode = false; // Tracking apakah mode edit atau tambah
-let editingBarangId = null; // Menyimpan ID data yang sedang diedit
+// ============================================================
+// 📦 STATE MANAGEMENT (UPDATED untuk Pagination & Live Search)
+// ============================================================
+let allBarangData   = [];   // Data barang halaman aktif
+let editMode        = false;
+let editingBarangId = null;
+
+// 🆕 Variabel untuk Pagination & Search
+let currentPage    = 1;
+let totalPages     = 1;
+let totalData      = 0;
+let totalHargaSemua = 0;
+let perPage        = 5;     
+let searchKeyword  = '';
+let debounceTimer  = null;
 
 // Helper: header standar tanpa Authorization
 // (InfinityFree memblokir Authorization header di shared hosting)
@@ -41,26 +53,19 @@ function withToken(data) {
 }
 
 function updateStats() {
-  const totalBarang = allBarangData.length;
-  const totalHarga = allBarangData.reduce((sum, item) => sum + parseInt(item.harga), 0);
-  
-  console.log("📊 Update Stats - Total Barang:", totalBarang, "Total Harga:", totalHarga);
-  console.log("📊 allBarangData:", allBarangData);
-  
-  const totalBarangEl = document.getElementById('total-barang');
-  const totalHargaEl = document.getElementById('total-harga');
-  
-  if (totalBarangEl) {
-    totalBarangEl.textContent = totalBarang;
-  } else {
-    console.error("❌ Element #total-barang tidak ditemukan");
-  }
-  
-  if (totalHargaEl) {
-    totalHargaEl.textContent = `Rp ${totalHarga.toLocaleString("id-ID")}`;
-  } else {
-    console.error("❌ Element #total-harga tidak ditemukan");
-  }
+
+    const totalBarangEl = document.getElementById("total-barang");
+    const totalHargaEl  = document.getElementById("total-harga");
+
+    if (totalBarangEl) {
+        totalBarangEl.textContent = totalData;
+    }
+
+    if (totalHargaEl) {
+        totalHargaEl.textContent =
+            "Rp " + totalHargaSemua.toLocaleString("id-ID");
+    }
+
 }
 
 function renderTable(dataToRender) {
@@ -74,7 +79,7 @@ function renderTable(dataToRender) {
     mobileCards = `<div style="padding:60px 24px;text-align:center;"><div style="font-size:.88rem;color:var(--text-sub);">Tidak ada barang ditemukan</div></div>`;
   } else {
     dataToRender.forEach((barang, index) => {
-      const nomor = index + 1;
+    const nomor = ((currentPage - 1) * perPage) + index + 1;
 
       // ── Buat HTML thumbnail gambar ──
       let gambarHTML;
@@ -129,48 +134,150 @@ function renderTable(dataToRender) {
   if (mobileCardList) mobileCardList.innerHTML = mobileCards;
 }
 
-function loadDataBarang() {
-  console.log("🔄 Loading data barang...");
-  
-  fetch(`${baseUrl}/api-toko/get_barang.php`, {
-    headers: getHeaders()
-  })
-    .then((response) => {
-      console.log("✅ Response status:", response.status);
-      
-      // Jika 401, berarti token invalid/expired
-      if (response.status === 401) {
-        console.error("❌ Token invalid atau expired. Redirect ke login.");
+// ============================================================
+// 🔄 LOAD DATA BARANG (dengan Pagination & Search)
+// ============================================================
+async function loadDataBarang() {
+console.log("🔄 Loading data... Page:", currentPage, "Search:", searchKeyword);
+
+const tbody = document.getElementById("isi-tabel");
+if (tbody) {
+    tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-4">⏳ Memuat data...</td></tr>`;
+}
+
+try {
+    // Bangun URL dengan query string
+    // Pakai relative path "../api-toko/" biar kompatibel XAMPP & InfinityFree
+    let url = `../api-toko/get_barang.php?page=${currentPage}`;
+    if (searchKeyword.trim() !== '') {
+        url += `&cari=${encodeURIComponent(searchKeyword)}`;
+    }
+
+    console.log("📡 Fetch URL:", url);
+
+    const response = await fetch(url, {
+        method: "GET",
+        headers: getHeaders()
+    });
+
+    // Jika 401, token invalid → redirect ke login
+    if (response.status === 401) {
+        console.error("❌ Token invalid/expired. Redirect ke login.");
         localStorage.removeItem('token_toko');
         window.location.href = '/app-toko/login.html';
         return;
-      }
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then((responseObject) => {
-      if (!responseObject) return; // Exit jika sudah redirect ke login
-      
-      console.log("📦 Response Object:", responseObject);
-      
-      if (!responseObject.data) {
-        throw new Error("Data tidak ditemukan dalam response");
-      }
+    }
 
-      allBarangData = responseObject.data; // Simpan data original
-      console.log("✅ Data berhasil disimpan. Total:", allBarangData.length);
-      
-      renderTable(allBarangData);
-      updateStats(); // Panggil updateStats setelah data tersimpan
-    })
-    .catch((error) => {
-      console.error("❌ Gagal memuat data:", error);
-      const tbody = document.getElementById("isi-tabel");
-      tbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger">Gagal memuat data: ${error.message}</td></tr>`;
-    });
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const responseObject = await response.json();
+    console.log("📦 Response:", responseObject);
+
+    if (!responseObject.data) {
+        throw new Error("Data tidak ditemukan dalam response");
+    }
+
+    // Update state pagination
+    allBarangData = responseObject.data;
+totalPages    = responseObject.total_halaman || 1;
+currentPage   = responseObject.halaman_saat_ini || 1;
+totalData        = responseObject.total_data || 0;
+totalHargaSemua  = responseObject.total_harga || 0;
+perPage       = responseObject.per_page || 5;
+
+    console.log(`✅ Page ${currentPage}/${totalPages}, Total: ${totalData}`);
+
+    // Render tabel & update UI
+    renderTable(allBarangData);
+    updateStats();
+    updatePaginationUI();
+
+} catch (error) {
+    console.error("❌ Gagal memuat data:", error);
+    if (tbody) {
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger">Gagal memuat data: ${error.message}</td></tr>`;
+    }
+}
+}
+
+// ============================================================
+// 📄 PAGINATION FUNCTIONS
+// ============================================================
+function updatePaginationUI() {
+const pageInfo = document.getElementById('page-info');
+const btnPrev  = document.getElementById('btn-prev');
+const btnNext  = document.getElementById('btn-next');
+
+// Update info halaman
+if (pageInfo) {
+    pageInfo.textContent = `Halaman ${currentPage} dari ${totalPages} (Total: ${totalData} Data)`;
+}
+
+// Update tombol Prev
+if (btnPrev) {
+    if (currentPage <= 1) {
+        btnPrev.disabled = true;
+        btnPrev.style.background = '#e5e7eb';
+        btnPrev.style.color = '#6b7280';
+        btnPrev.style.cursor = 'not-allowed';
+    } else {
+        btnPrev.disabled = false;
+        btnPrev.style.background = 'linear-gradient(135deg,#6366f1,#8b5cf6)';
+        btnPrev.style.color = 'white';
+        btnPrev.style.cursor = 'pointer';
+    }
+}
+
+// Update tombol Next
+if (btnNext) {
+    if (currentPage >= totalPages) {
+        btnNext.disabled = true;
+        btnNext.style.background = '#e5e7eb';
+        btnNext.style.color = '#6b7280';
+        btnNext.style.cursor = 'not-allowed';
+    } else {
+        btnNext.disabled = false;
+        btnNext.style.background = 'linear-gradient(135deg,#6366f1,#8b5cf6)';
+        btnNext.style.color = 'white';
+        btnNext.style.cursor = 'pointer';
+    }
+}
+}
+
+function prevPage() {
+if (currentPage > 1) {
+    currentPage--;
+    loadDataBarang();
+}
+}
+
+function nextPage() {
+if (currentPage < totalPages) {
+    currentPage++;
+    loadDataBarang();
+}
+}
+
+// ============================================================
+// 🔍 LIVE SEARCH (dengan DEBOUNCE biar gak spam fetch)
+// ============================================================
+function setupSearchListener() {
+const searchInput = document.getElementById('search-barang');
+if (!searchInput) return;
+
+searchInput.addEventListener('keyup', (e) => {
+    const keyword = e.target.value;
+    
+    // Debounce 300ms: tunggu user berhenti ngetik 300ms baru fetch
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+        searchKeyword = keyword.trim();
+        currentPage   = 1; // Reset ke halaman 1 setiap search baru
+        loadDataBarang();
+    }, 300);
+});
 }
 
 // ============================================================
@@ -428,34 +535,22 @@ function submitTambahBarang(event) {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  console.log("📄 DOM Content Loaded");
-  const loadingStatus = document.getElementById('loading-status');
-  
-  loadDataBarang();
-  
-  // Sembunyikan loading spinner setelah data dimuat
-  setTimeout(() => {
+console.log("📄 DOM Content Loaded");
+const loadingStatus = document.getElementById('loading-status');
+
+// Load data pertama kali
+loadDataBarang();
+
+// Sembunyikan loading spinner setelah data dimuat
+setTimeout(() => {
     if (loadingStatus) loadingStatus.classList.add('d-none');
-  }, 1000);
-  
-  // Setup search functionality
-  const searchInput = document.getElementById('search-barang');
-  if (searchInput) {
-    searchInput.addEventListener('keyup', (e) => {
-      const searchTerm = e.target.value.toLowerCase();
-      
-      if (searchTerm.trim() === '') {
-        // Jika search kosong, tampilkan semua data
-        renderTable(allBarangData);
-      } else {
-        // Filter data berdasarkan search term
-        const filtered = allBarangData.filter(barang => 
-          barang.nama_barang.toLowerCase().includes(searchTerm)
-        );
-        renderTable(filtered);
-      }
-    });
-  }
+}, 1000);
+
+// 🆕 Setup live search dengan debounce
+setupSearchListener();
+
+// 🆕 Inisialisasi UI pagination
+updatePaginationUI();
 });
 
 // ============================================================
