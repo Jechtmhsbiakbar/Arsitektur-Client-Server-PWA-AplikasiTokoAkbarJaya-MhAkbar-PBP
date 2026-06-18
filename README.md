@@ -77,23 +77,28 @@ Perjalanan PjBL (Project Based Learning) ini mencakup:
 ## 📂 Struktur Folder Proyek
 
 ```text
-toko-PBP-01/
-├── 📄 index.html               # Antarmuka utama aplikasi (SPA)
-├── 📄 app.js                   # Semua logika JS: Fetch API, CRUD, PWA
-├── 📄 manifest.json            # Konfigurasi PWA manifest
-├── 📄 sw.js                    # Service Worker (caching & offline)
-├── 📄 README.md                # Dokumentasi proyek
+htdocs/
+├── 📄 .htaccess                 # Konfigurasi rewrite/proteksi hosting
 │
-├── 📁 icons/                   # Aset icon untuk PWA
-│   ├── icon-192x192.png        # Icon 192px (wajib untuk PWA)
-│   └── icon-512x512.png        # Icon 512px (wajib untuk PWA)
+├── 📁 api-toko/                 # Backend REST API (PHP)
+│   ├── 📄 koneksi.php           # Konfigurasi koneksi database MySQL
+│   ├── 📄 get_barang.php        # GET    — Ambil data barang + search + pagination
+│   ├── 📄 tambah_barang.php     # POST   — Tambah barang baru
+│   ├── 📄 edit_barang.php       # PUT    — Edit data barang
+│   ├── 📄 login.php             # GET    — Ambil data users
+│   └── 📄 hapus_barang.php      # DELETE — Hapus data barang
+|   └── 📁 uploads/              # Directory Upload image dari users
 │
-└── 📁 api-toko/                # Backend REST API (PHP)
-    ├── koneksi.php             # Konfigurasi koneksi database + CORS header
-    ├── get_barang.php          # GET    — Ambil semua data barang
-    ├── tambah_barang.php       # POST   — Tambah barang baru
-    ├── update_barang.php       # PUT    — Update data barang
-    └── delete_barang.php       # DELETE — Hapus data barang
+└── 📁 app-toko/                 # Frontend PWA
+    ├── 📄 index.html            # Halaman utama aplikasi
+    ├── 📄 login.html            # Halaman login
+    ├── 📄 app.js                # Logika Fetch API, CRUD, Search, Pagination, PWA
+    ├── 📄 sw.js                 # Service Worker untuk mode offline
+    ├── 📄 manifest.json         # Konfigurasi Progressive Web App
+    │
+    └── 📁 icons/                # Icon aplikasi PWA
+        ├── 🖼️ icon-192x192.png  # Icon 192x192
+        └── 🖼️ icon-512x512.png  # Icon 512x512
 ```
 
 ---
