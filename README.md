@@ -14,10 +14,7 @@
 
 | Tugas | URL | Status |
 |-------|-----|--------|
-| **Tugas 2** | [https://aplikasitokoakbarjaya.infinityfreeapp.com/](https://aplikasitokoakbarjaya.infinityfreeapp.com/) | ✅ Online |
-| **Tugas 3 (Final)** | [https://tokoakbar.infinityfree.me/](https://tokoakbar.infinityfree.me/) | ✅ Online |
-
-> 🎯 **Tugas Final:** [https://tokoakbar.infinityfree.me/](https://tokoakbar.infinityfree.me/)
+| 🎯 **Tugas Final:** | [https://tokoakbar.infinityfree.me/](https://tokoakbar.infinityfree.me/) | ✅ Online |
 
 ---
 
