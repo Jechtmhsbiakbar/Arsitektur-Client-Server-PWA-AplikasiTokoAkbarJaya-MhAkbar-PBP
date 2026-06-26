@@ -4,348 +4,565 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login — Toko Akbar Jaya</title>
-    
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
-            --color-primary: #4338ca;
-            --color-accent: #7c3aed;
-            --color-bg: #f1f0fb;
-            --color-text: #1e1b4b;
-            --color-border: #e0e7ff;
-            --color-error: #dc2626;
-            --color-success: #059669;
+            --primary:    #4338ca;
+            --primary-dk: #312e81;
+            --primary-lt: #6366f1;
+            --accent:     #f59e0b;
+            --success:    #059669;
+            --danger:     #dc2626;
+            --border:     #e0e7ff;
+            --text:       #1e1b4b;
+            --sub:        #6b7280;
         }
 
         body {
             font-family: 'Outfit', sans-serif;
-            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: #f1f0fb;
         }
 
-        .login-container {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        /* ── LEFT PANEL ───────────────────────────────── */
+        .left-panel {
+            background: linear-gradient(150deg, var(--primary-dk) 0%, var(--primary) 50%, #5b21b6 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 52px 48px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .left-panel::before {
+            content: '';
+            position: absolute;
+            top: -80px; right: -80px;
+            width: 320px; height: 320px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(245,158,11,.22) 0%, transparent 70%);
+        }
+        .left-panel::after {
+            content: '';
+            position: absolute;
+            bottom: -60px; left: -60px;
+            width: 260px; height: 260px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(99,102,241,.3) 0%, transparent 70%);
+        }
+
+        .left-top { position: relative; z-index: 1; }
+        .left-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 64px;
+        }
+        .left-logo-icon {
+            width: 40px; height: 40px;
+            background: rgba(255,255,255,.15);
+            border: 1px solid rgba(255,255,255,.25);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .left-headline {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 3.5vw, 3rem);
+            color: #fff;
+            line-height: 1.15;
+            letter-spacing: -.5px;
+            margin-bottom: 20px;
+        }
+        .left-headline em {
+            font-style: italic;
+            color: rgba(245,158,11,.9);
+        }
+
+        .left-desc {
+            font-size: .9rem;
+            color: rgba(255,255,255,.62);
+            line-height: 1.7;
+            max-width: 320px;
+        }
+
+        .left-features {
+            position: relative; z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: 48px;
+        }
+        .feat-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: rgba(255,255,255,.8);
+            font-size: .85rem;
+            font-weight: 500;
+        }
+        .feat-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            flex-shrink: 0;
+        }
+
+        .left-footer {
+            position: relative; z-index: 1;
+            font-size: .72rem;
+            color: rgba(255,255,255,.28);
+            margin-top: 48px;
+        }
+
+        /* Decorative grid lines */
+        .grid-lines {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+            background-size: 48px 48px;
+            pointer-events: none;
+        }
+
+        /* ── RIGHT PANEL ──────────────────────────────── */
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 48px 40px;
+            background: #fff;
+        }
+
+        .login-box {
             width: 100%;
-            max-width: 400px;
-            padding: 48px 32px;
-            animation: slideUp 0.6s ease-out;
+            max-width: 380px;
+            animation: slideUp .55s cubic-bezier(.22,1,.36,1) both;
         }
 
         @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity:0; transform: translateY(24px); }
+            to   { opacity:1; transform: translateY(0); }
         }
 
-        .login-header {
-            text-align: center;
-            margin-bottom: 36px;
+        .login-eyebrow {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 28px;
         }
-
-        .logo-text {
-            font-family: 'Playfair Display', serif;
-            font-size: 28px;
+        .login-eyebrow span {
+            font-size: .7rem;
             font-weight: 700;
-            color: var(--color-primary);
-            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--primary-lt);
         }
-
-        .subtitle {
-            font-size: 14px;
-            color: #888;
-            font-weight: 400;
-        }
-
-        .form-group {
-            margin-bottom: 24px;
-        }
-
-        label {
+        .login-eyebrow::before {
+            content: '';
             display: block;
-            font-size: 14px;
+            width: 24px; height: 2px;
+            background: var(--primary-lt);
+            border-radius: 2px;
+        }
+
+        .login-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 6px;
+            letter-spacing: -.3px;
+            line-height: 1.15;
+        }
+
+        .login-sub {
+            font-size: .875rem;
+            color: var(--sub);
+            margin-bottom: 36px;
+            line-height: 1.5;
+        }
+
+        /* Alert */
+        .alert-bar {
+            display: none;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 22px;
+            font-size: .83rem;
             font-weight: 600;
-            color: var(--color-text);
+            align-items: center;
+            gap: 8px;
+            animation: fadeIn .25s ease;
+        }
+        .alert-bar.show { display: flex; }
+        .alert-bar.error {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+        .alert-bar.success {
+            background: #ecfdf5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        @keyframes fadeIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+
+        /* Form fields */
+        .field-wrap { margin-bottom: 20px; }
+
+        .field-label {
+            display: block;
+            font-size: .75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .7px;
+            color: var(--text);
             margin-bottom: 8px;
         }
 
-        input[type="text"],
-        input[type="password"] {
+        .field-inner {
+            position: relative;
+        }
+        .field-inner svg {
+            position: absolute;
+            left: 14px; top: 50%;
+            transform: translateY(-50%);
+            color: var(--sub);
+            pointer-events: none;
+            transition: color .2s;
+        }
+        .field-inner input {
             width: 100%;
-            padding: 12px 16px;
-            border: 2px solid var(--color-border);
-            border-radius: 8px;
+            padding: 13px 16px 13px 42px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
             font-family: 'Outfit', sans-serif;
-            font-size: 14px;
-            transition: all 0.3s ease;
+            font-size: .9rem;
+            color: var(--text);
+            background: #faf9ff;
+            transition: border-color .2s, box-shadow .2s;
         }
-
-        input[type="text"]:focus,
-        input[type="password"]:focus {
+        .field-inner input:focus {
             outline: none;
-            border-color: var(--color-primary);
-            box-shadow: 0 0 0 4px rgba(67, 56, 202, 0.1);
+            border-color: var(--primary-lt);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(99,102,241,.12);
         }
+        .field-inner input:focus + svg,
+        .field-inner:focus-within svg { color: var(--primary-lt); }
 
+        /* Password toggle */
+        .pw-toggle {
+            position: absolute;
+            right: 13px; top: 50%;
+            transform: translateY(-50%);
+            background: none; border: none;
+            cursor: pointer; color: var(--sub);
+            padding: 4px;
+            display: flex; align-items: center;
+            transition: color .2s;
+        }
+        .pw-toggle:hover { color: var(--primary); }
+
+        /* Field with password toggle - different svg order */
+        .field-inner.has-toggle input { padding-right: 44px; }
+
+        /* Submit button */
         .btn-login {
             width: 100%;
-            padding: 12px 16px;
-            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
-            color: white;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-lt) 100%);
+            color: #fff;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
+            border-radius: 10px;
             font-family: 'Outfit', sans-serif;
+            font-size: .95rem;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 12px;
+            transition: all .25s;
+            box-shadow: 0 4px 18px rgba(67,56,202,.35);
+            margin-top: 8px;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: .2px;
         }
-
+        .btn-login::after {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,.15) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity .2s;
+        }
         .btn-login:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 24px rgba(67, 56, 202, 0.3);
+            box-shadow: 0 10px 28px rgba(67,56,202,.4);
         }
-
-        .btn-login:active {
-            transform: translateY(0);
-        }
-
+        .btn-login:hover::after { opacity: 1; }
+        .btn-login:active { transform: scale(.98); }
         .btn-login:disabled {
-            opacity: 0.6;
+            opacity: .6;
             cursor: not-allowed;
             transform: none;
+            box-shadow: none;
         }
 
-        .alert {
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-bottom: 24px;
-            font-size: 14px;
+        /* Loading state inside button */
+        .btn-login .btn-text   { transition: opacity .2s; }
+        .btn-login .btn-spin   {
             display: none;
-            animation: slideDown 0.3s ease-out;
+            position: absolute; left: 50%; top: 50%;
+            transform: translate(-50%,-50%);
         }
+        .btn-login.loading .btn-text { opacity: 0; }
+        .btn-login.loading .btn-spin { display: block; }
 
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .alert.error {
-            background-color: #fee2e2;
-            color: var(--color-error);
-            border-left: 4px solid var(--color-error);
-        }
-
-        .alert.success {
-            background-color: #d1fae5;
-            color: var(--color-success);
-            border-left: 4px solid var(--color-success);
-        }
-
-        .alert.show {
-            display: block;
-        }
-
-        .loading {
-            display: none;
-            text-align: center;
-            font-size: 14px;
-            color: var(--color-primary);
-            margin-top: 12px;
-        }
-
-        .loading.show {
-            display: block;
-        }
-
-        .spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid var(--color-border);
-            border-top-color: var(--color-primary);
+        .spin-ring {
+            width: 20px; height: 20px;
+            border: 2.5px solid rgba(255,255,255,.35);
+            border-top-color: #fff;
             border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-            margin-right: 8px;
+            animation: spin .65s linear infinite;
         }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        /* Demo info */
+        .demo-card {
+            margin-top: 28px;
+            padding: 14px 16px;
+            background: #f5f3ff;
+            border: 1px solid #ddd6fe;
+            border-radius: 10px;
+            font-size: .8rem;
+            color: var(--sub);
         }
-
-        .demo-info {
-            margin-top: 24px;
-            padding-top: 24px;
-            border-top: 1px solid var(--color-border);
-            font-size: 13px;
-            color: #888;
-            line-height: 1.6;
-        }
-
-        .demo-info strong {
-            color: var(--color-text);
+        .demo-card strong {
             display: block;
-            margin-bottom: 4px;
+            color: var(--primary);
+            font-size: .72rem;
+            text-transform: uppercase;
+            letter-spacing: .7px;
+            margin-bottom: 6px;
+        }
+        .demo-cred {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 4px;
+        }
+        .demo-badge {
+            background: #ede9fe;
+            color: var(--primary);
+            border-radius: 6px;
+            padding: 2px 9px;
+            font-family: 'Courier New', monospace;
+            font-size: .78rem;
+            font-weight: 700;
+        }
+
+        /* Right panel footer */
+        .right-footer {
+            margin-top: 36px;
+            font-size: .72rem;
+            color: #d1d5db;
+            text-align: center;
+        }
+
+        /* ── RESPONSIVE ─────────────────────────────── */
+        @media (max-width: 768px) {
+            body { grid-template-columns: 1fr; }
+            .left-panel { display: none; }
+            .right-panel { padding: 40px 24px; min-height: 100vh; }
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-header">
-            <div class="logo-text">🏪 Toko Akbar Jaya</div>
-            <div class="subtitle">Sistem Manajemen Inventaris</div>
+
+<!-- ── LEFT ──────────────────────────────────────────────── -->
+<div class="left-panel">
+    <div class="grid-lines"></div>
+
+    <div class="left-top">
+        <div class="left-logo">
+            <div class="left-logo-icon">🏪</div>
+            Toko Akbar Jaya
         </div>
 
-        <div id="alert" class="alert"></div>
+        <h1 class="left-headline">
+            Kelola inventaris<br>dengan <em>lebih cerdas.</em>
+        </h1>
+        <p class="left-desc">
+            Sistem manajemen barang modern berbasis PWA — berjalan di mana saja, kapan saja.
+        </p>
 
-        <form id="form-login">
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" placeholder="Masukkan username" required autofocus>
-            </div>
-
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Masukkan password" required>
-            </div>
-
-            <button type="submit" id="btn-login" class="btn-login">Masuk</button>
-        </form>
-
-        <div class="loading" id="loading">
-            <span class="spinner"></span>Sedang login...
-        </div>
-
-        <div class="demo-info">
-            <strong>🔧 Demo Account:</strong>
-            Username: <code style="background: #f3f4f6; padding: 2px 6px; border-radius: 4px;">admin</code><br>
-            Password: <code style="background: #f3f4f6; padding: 2px 6px; border-radius: 4px;">12345</code>
+        <div class="left-features">
+            <div class="feat-item"><div class="feat-dot"></div> CRUD barang real-time via REST API</div>
+            <div class="feat-item"><div class="feat-dot"></div> Dashboard statistik Top 5 termahal</div>
+            <div class="feat-item"><div class="feat-dot"></div> Bisa diinstall sebagai aplikasi PWA</div>
+            <div class="feat-item"><div class="feat-dot"></div> Berjalan di localhost & InfinityFree</div>
         </div>
     </div>
 
-    <script>
-        // Tentukan base URL berdasarkan domain
-        let baseUrl;
-        
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            // Localhost - gunakan http://localhost
-            baseUrl = 'http://localhost/toko-PBP-01';
-        } else {
-            // Hosting - gunakan https
-            baseUrl = 'https://tokoakbar.infinityfree.me';
+    <div class="left-footer">
+        Pemrograman Berbasis Platform · UMP 2025/2026
+    </div>
+</div>
+
+<!-- ── RIGHT ─────────────────────────────────────────────── -->
+<div class="right-panel">
+    <div class="login-box">
+
+        <div class="login-eyebrow"><span>Selamat datang kembali</span></div>
+        <div class="login-title">Masuk ke akun</div>
+        <div class="login-sub">Masukkan kredensial Anda untuk mengakses dashboard inventaris.</div>
+
+        <div id="alert" class="alert-bar"></div>
+
+        <div class="field-wrap">
+            <label class="field-label" for="username">Username</label>
+            <div class="field-inner">
+                <input type="text" id="username" placeholder="Masukkan username" required autofocus autocomplete="username">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);pointer-events:none;">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z"/>
+                </svg>
+            </div>
+        </div>
+
+        <div class="field-wrap">
+            <label class="field-label" for="password">Password</label>
+            <div class="field-inner has-toggle">
+                <input type="password" id="password" placeholder="Masukkan password" required autocomplete="current-password">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);pointer-events:none;">
+                    <rect x="3" y="11" width="18" height="11" rx="2"/><path stroke-linecap="round" d="M7 11V7a5 5 0 0110 0v4"/>
+                </svg>
+                <button class="pw-toggle" type="button" id="pw-toggle" title="Tampilkan password">
+                    <svg id="eye-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <button type="button" id="btn-login" class="btn-login">
+            <span class="btn-text">Masuk</span>
+            <span class="btn-spin"><div class="spin-ring"></div></span>
+        </button>
+
+        <div class="demo-card">
+            <strong>🔧 Demo Account</strong>
+            <div class="demo-cred">
+                <span>Username</span>
+                <span class="demo-badge">admin</span>
+            </div>
+            <div class="demo-cred" style="margin-top:4px;">
+                <span>Password</span>
+                <span class="demo-badge">12345</span>
+            </div>
+        </div>
+
+        <div class="right-footer">Toko Akbar Jaya &copy; 2025/2026 · Dibuat untuk mata kuliah PBP</div>
+    </div>
+</div>
+
+<script>
+    // ── Base URL detection ───────────────────────────────
+    const baseUrl = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+        ? 'http://localhost/toko-PBP-01'
+        : 'https://tokoakbar.infinityfree.me';
+
+    console.log('🌐 Base URL:', baseUrl);
+
+    // ── Refs ─────────────────────────────────────────────
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const btnLogin      = document.getElementById('btn-login');
+    const alertEl       = document.getElementById('alert');
+    const pwToggle      = document.getElementById('pw-toggle');
+    const eyeIcon       = document.getElementById('eye-icon');
+
+    // Redirect jika sudah login
+    if (localStorage.getItem('token_toko')) {
+        window.location.href = '/app-toko/index.html';
+    }
+
+    // ── Password show/hide ────────────────────────────────
+    pwToggle.addEventListener('click', () => {
+        const isPassword = passwordInput.type === 'password';
+        passwordInput.type = isPassword ? 'text' : 'password';
+        eyeIcon.innerHTML = isPassword
+            ? `<path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>`
+            : `<path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>`;
+    });
+
+    // ── Login logic ───────────────────────────────────────
+    btnLogin.addEventListener('click', handleLogin);
+    document.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
+
+    async function handleLogin() {
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value;
+
+        if (!username || !password) {
+            showAlert('error', '⚠ Username dan password wajib diisi.');
+            return;
         }
-        
-        console.log('🌐 Base URL detected:', baseUrl);
 
-        const formLogin = document.getElementById('form-login');
-        const usernameInput = document.getElementById('username');
-        const passwordInput = document.getElementById('password');
-        const btnLogin = document.getElementById('btn-login');
-        const alertEl = document.getElementById('alert');
-        const loadingEl = document.getElementById('loading');
+        setLoading(true);
+        hideAlert();
 
-        // Cek apakah sudah login sebelumnya, langsung ke index
-        if (localStorage.getItem('token_toko')) {
-            window.location.href = '/app-toko/index.html';
-        }
+        try {
+            const response = await fetch(`${baseUrl}/api-toko/login.php`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
 
-        formLogin.addEventListener('submit', async function(e) {
-            e.preventDefault();
+            const result = await response.json();
 
-            const username = usernameInput.value.trim();
-            const password = passwordInput.value;
-
-            if (!username || !password) {
-                showAlert('error', 'Username dan Password harus diisi!');
-                return;
+            if (result.status === 'success') {
+                localStorage.setItem('token_toko', result.token);
+                showAlert('success', '✓ Login berhasil. Mengalihkan...');
+                setTimeout(() => { window.location.href = '/app-toko/index.html'; }, 900);
+            } else {
+                showAlert('error', '✕ ' + result.pesan);
+                setLoading(false);
             }
-
-            // Tampilkan loading
-            btnLogin.disabled = true;
-            loadingEl.classList.add('show');
-            hideAlert();
-
-            try {
-                console.log('📤 Sending login request to:', `${baseUrl}/api-toko/login.php`);
-                
-                const response = await fetch(`${baseUrl}/api-toko/login.php`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        username: username,
-                        password: password
-                    })
-                });
-
-                console.log('📥 Response status:', response.status);
-                
-                const result = await response.json();
-                console.log('📦 Response data:', result);
-
-                if (result.status === 'success') {
-                    // Simpan token ke localStorage
-                    localStorage.setItem('token_toko', result.token);
-                    console.log('✅ Token saved:', result.token);
-                    
-                    showAlert('success', '✅ ' + result.pesan);
-                    
-                    // Redirect ke halaman utama setelah 1 detik
-                    setTimeout(() => {
-                        window.location.href = '/app-toko/index.html';
-                    }, 1000);
-                } else {
-                    showAlert('error', '❌ ' + result.pesan);
-                    btnLogin.disabled = false;
-                    loadingEl.classList.remove('show');
-                }
-            } catch (error) {
-                console.error('❌ Fetch error:', error);
-                showAlert('error', '❌ Terjadi kesalahan. Periksa koneksi atau URL API Anda!');
-                btnLogin.disabled = false;
-                loadingEl.classList.remove('show');
-            }
-        });
-
-        function showAlert(type, message) {
-            alertEl.className = `alert ${type} show`;
-            alertEl.textContent = message;
+        } catch (err) {
+            console.error(err);
+            showAlert('error', '✕ Koneksi gagal. Periksa URL API Anda.');
+            setLoading(false);
         }
+    }
 
-        function hideAlert() {
-            alertEl.classList.remove('show');
-        }
+    function setLoading(state) {
+        btnLogin.disabled = state;
+        btnLogin.classList.toggle('loading', state);
+    }
 
-        // Clear alert saat user mulai mengetik
-        usernameInput.addEventListener('focus', hideAlert);
-        passwordInput.addEventListener('focus', hideAlert);
-    </script>
+    function showAlert(type, msg) {
+        alertEl.className = `alert-bar show ${type}`;
+        alertEl.textContent = msg;
+    }
+
+    function hideAlert() {
+        alertEl.className = 'alert-bar';
+    }
+
+    [usernameInput, passwordInput].forEach(el => el.addEventListener('focus', hideAlert));
+</script>
 </body>
 </html>

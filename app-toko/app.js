@@ -65,7 +65,123 @@ function updateStats() {
         totalHargaEl.textContent =
             "Rp " + totalHargaSemua.toLocaleString("id-ID");
     }
+}
 
+
+// ============================================================
+// 📊 DASHBOARD STATISTIK — TOP 5 BARANG TERMAHAL (Chart.js)
+// ============================================================
+let myChartInstance = null;
+
+async function renderDashboard() {
+    const loadingEl = document.getElementById('dashboard-loading');
+    const emptyEl   = document.getElementById('chart-empty');
+    const canvas    = document.getElementById('myChart');
+
+    if (loadingEl) loadingEl.style.display = 'block';
+
+    try {
+        // Relative path: kompatibel XAMPP localhost & InfinityFree hosting
+        // app.js ada di app-toko/ → naik satu level (../) → lalu ke api-toko/statistik.php
+        const response = await fetch('../api-toko/statistik.php');
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const json = await response.json();
+        console.log('📊 Dashboard data:', json);
+
+        if (json.status !== 'success') {
+            throw new Error(json.message || 'Status bukan success');
+        }
+
+        const { labels, values } = json.chart_data;
+
+        if (labels.length === 0) {
+            if (canvas)  canvas.style.display = 'none';
+            if (emptyEl) emptyEl.style.display = 'block';
+            return;
+        }
+
+        if (canvas)  canvas.style.display = 'block';
+        if (emptyEl) emptyEl.style.display = 'none';
+
+        // BUG FIX: Destroy instance lama agar tidak terjadi ghosting effect
+        let chartStatus = Chart.getChart("myChart");
+        if (chartStatus) {
+            chartStatus.destroy();
+        }
+
+        const ctx = canvas.getContext('2d');
+
+        myChartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Harga (Rp)',
+                    data: values,
+                    backgroundColor: [
+                        'rgba(67, 56, 202, 0.85)',
+                        'rgba(99, 102, 241, 0.80)',
+                        'rgba(139, 92, 246, 0.80)',
+                        'rgba(167, 139, 250, 0.75)',
+                        'rgba(196, 181, 253, 0.70)',
+                    ],
+                    borderColor: [
+                        '#4338ca',
+                        '#6366f1',
+                        '#8b5cf6',
+                        '#a78bfa',
+                        '#c4b5fd',
+                    ],
+                    borderWidth: 2,
+                    borderRadius: 8,
+                    borderSkipped: false,
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: (ctx) => {
+                                const val = ctx.parsed.x;
+                                return ' Rp ' + val.toLocaleString('id-ID');
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: (val) => 'Rp ' + val.toLocaleString('id-ID'),
+                            font: { size: 11, family: 'Outfit, sans-serif' },
+                            color: '#6b7280',
+                            maxTicksLimit: 6,
+                        },
+                        grid: { color: 'rgba(0,0,0,0.05)' }
+                    },
+                    y: {
+                        ticks: {
+                            font: { size: 12, family: 'Outfit, sans-serif', weight: '600' },
+                            color: '#1e1b4b',
+                        },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+    } catch (error) {
+        console.error('❌ Gagal render dashboard:', error);
+    } finally {
+        if (loadingEl) loadingEl.style.display = 'none';
+    }
 }
 
 function renderTable(dataToRender) {
@@ -326,6 +442,7 @@ function deleteBarang(id) {
       console.log("🔄 Auto-refresh data dari server...");
       setTimeout(() => {
         loadDataBarang();
+        renderDashboard(); // 📊 Auto-refresh dashboard setelah hapus
       }, 1000);
     } else {
       showAlert("❌ Gagal!", result.message, "error");
@@ -467,7 +584,10 @@ function submitTambahBarang(event) {
           const prev = document.getElementById('preview-gambar');
           if (prev) prev.style.display = 'none';
         }
-        setTimeout(() => loadDataBarang(), 800);
+        setTimeout(() => {
+          loadDataBarang();
+          renderDashboard(); // 📊 Auto-refresh dashboard setelah edit
+        }, 800);
       } else {
         showAlert("error", "❌ Gagal!", result.message || "Gagal memperbarui barang.");
       }
@@ -522,7 +642,10 @@ function submitTambahBarang(event) {
           const prev = document.getElementById('preview-gambar');
           if (prev) prev.style.display = 'none';
         }
-        setTimeout(() => loadDataBarang(), 800);
+        setTimeout(() => {
+          loadDataBarang();
+          renderDashboard(); // 📊 Auto-refresh dashboard setelah tambah
+        }, 800);
       } else {
         showAlert("error", "❌ Gagal!", result.message || "Gagal menambahkan barang.");
       }
@@ -540,6 +663,7 @@ const loadingStatus = document.getElementById('loading-status');
 
 // Load data pertama kali
 loadDataBarang();
+renderDashboard(); // 📊 Load dashboard saat halaman pertama kali dibuka
 
 // Sembunyikan loading spinner setelah data dimuat
 setTimeout(() => {
