@@ -71,49 +71,110 @@ function updateStats() {
 // ============================================================
 // 📊 DASHBOARD STATISTIK — TOP 5 BARANG TERMAHAL (Chart.js)
 // ============================================================
+// ============================================================
+// 📊 DASHBOARD STATISTIK — TOP 5 BARANG TERMAHAL (Chart.js)
+// Versi: Vertical Bar "Balok Besar" — Unik & Responsive
+// ============================================================
 let myChartInstance = null;
+
+// 🎨 Custom Plugin: Label Harga di Atas Balok
+const dataLabelPlugin = {
+    id: 'customDataLabels',
+    afterDatasetsDraw(chart) {
+        const { ctx } = chart;
+        chart.data.datasets.forEach((dataset, i) => {
+            const meta = chart.getDatasetMeta(i);
+            meta.data.forEach((bar, index) => {
+                const value = dataset.data[index];
+                if (value === undefined || value === null) return;
+
+                const label = 'Rp ' + parseInt(value).toLocaleString('id-ID');
+                ctx.save();
+                ctx.font = '600 11px Outfit, sans-serif';
+                ctx.fillStyle = '#4338ca';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'bottom';
+                ctx.fillText(label, bar.x, bar.y - 8);
+                ctx.restore();
+            });
+        });
+    }
+};
 
 async function renderDashboard() {
     const loadingEl = document.getElementById('dashboard-loading');
     const emptyEl   = document.getElementById('chart-empty');
     const canvas    = document.getElementById('myChart');
-
     if (loadingEl) loadingEl.style.display = 'block';
 
     try {
-        // Relative path: kompatibel XAMPP localhost & InfinityFree hosting
-        // app.js ada di app-toko/ → naik satu level (../) → lalu ke api-toko/statistik.php
         const response = await fetch('../api-toko/statistik.php');
 
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
+        // Baca body sebagai teks dulu, supaya kalau bukan JSON valid
+        // (mis. PHP fatal error / halaman kosong) kita bisa lihat isinya
+        const rawText = await response.text();
+        let json;
+        try {
+            json = JSON.parse(rawText);
+        } catch (parseErr) {
+            console.error('❌ Response statistik.php bukan JSON valid:', rawText);
+            throw new Error(
+                'Server tidak mengirim JSON valid (kemungkinan error PHP di statistik.php). ' +
+                'Cek tab Network di browser untuk melihat responsenya.'
+            );
         }
 
-        const json = await response.json();
         console.log('📊 Dashboard data:', json);
 
-        if (json.status !== 'success') {
-            throw new Error(json.message || 'Status bukan success');
+        if (!response.ok || json.status !== 'success') {
+            throw new Error(json.message || `HTTP ${response.status}`);
         }
 
         const { labels, values } = json.chart_data;
 
         if (labels.length === 0) {
-            if (canvas)  canvas.style.display = 'none';
+            if (canvas) canvas.style.display = 'none';
             if (emptyEl) emptyEl.style.display = 'block';
             return;
         }
 
-        if (canvas)  canvas.style.display = 'block';
+        if (canvas) canvas.style.display = 'block';
         if (emptyEl) emptyEl.style.display = 'none';
 
-        // BUG FIX: Destroy instance lama agar tidak terjadi ghosting effect
-        let chartStatus = Chart.getChart("myChart");
-        if (chartStatus) {
-            chartStatus.destroy();
-        }
+        // BUG FIX: Destroy instance lama agar tidak ghosting
+        const chartStatus = Chart.getChart("myChart");
+        if (chartStatus) chartStatus.destroy();
 
         const ctx = canvas.getContext('2d');
+
+        // 🎨 Gradient vertikal (atas terang → bawah gelap) untuk setiap balok
+        const makeGradient = (ctx, colorTop, colorBottom) => {
+            const g = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
+            g.addColorStop(0, colorTop);
+            g.addColorStop(1, colorBottom);
+            return g;
+        };
+
+        // Palet warna mewah — 5 balok = 5 karakter berbeda
+        const paletTop = [
+            'rgba(99, 102, 241, 1)',   // Indigo
+            'rgba(139, 92, 246, 1)',   // Violet
+            'rgba(236, 72, 153, 1)',   // Pink
+            'rgba(245, 158, 11, 1)',   // Amber
+            'rgba(16, 185, 129, 1)'    // Emerald
+        ];
+        const paletBottom = [
+            'rgba(67, 56, 202, 0.45)',
+            'rgba(109, 40, 217, 0.45)',
+            'rgba(190, 24, 93, 0.45)',
+            'rgba(217, 119, 6, 0.45)',
+            'rgba(4, 120, 87, 0.45)'
+        ];
+        const paletBorder = ['#4338ca', '#6d28d9', '#be185d', '#d97706', '#047857'];
+
+        const bgColors = paletTop.map((top, i) => makeGradient(ctx, top, paletBottom[i]));
+
+        const isMobile = window.innerWidth < 600;
 
         myChartInstance = new Chart(ctx, {
             type: 'bar',
@@ -122,63 +183,112 @@ async function renderDashboard() {
                 datasets: [{
                     label: 'Harga (Rp)',
                     data: values,
-                    backgroundColor: [
-                        'rgba(67, 56, 202, 0.85)',
-                        'rgba(99, 102, 241, 0.80)',
-                        'rgba(139, 92, 246, 0.80)',
-                        'rgba(167, 139, 250, 0.75)',
-                        'rgba(196, 181, 253, 0.70)',
-                    ],
-                    borderColor: [
-                        '#4338ca',
-                        '#6366f1',
-                        '#8b5cf6',
-                        '#a78bfa',
-                        '#c4b5fd',
-                    ],
-                    borderWidth: 2,
-                    borderRadius: 8,
+                    backgroundColor: bgColors,
+                    borderColor: paletBorder,
+                    borderWidth: { top: 3, right: 0, bottom: 0, left: 0 },
+                    borderRadius: { topLeft: 14, topRight: 14, bottomLeft: 0, bottomRight: 0 },
                     borderSkipped: false,
+                    hoverBackgroundColor: paletTop,
+                    barPercentage: isMobile ? 0.75 : 0.6,
+                    categoryPercentage: isMobile ? 0.85 : 0.75,
                 }]
             },
             options: {
-                indexAxis: 'y',
                 responsive: true,
+                maintainAspectRatio: false,
+                layout: {
+                    padding: { top: 35, right: 10, bottom: 5, left: 10 }
+                },
+                animation: {
+                    duration: 1200,
+                    easing: 'easeOutQuart',
+                    delay: (context) => context.dataIndex * 120
+                },
                 plugins: {
                     legend: { display: false },
                     tooltip: {
+                        backgroundColor: 'rgba(30, 27, 75, 0.95)',
+                        titleColor: '#fff',
+                        bodyColor: '#e0e7ff',
+                        titleFont: { size: 13, weight: '700', family: 'Outfit' },
+                        bodyFont: { size: 12, family: 'Outfit' },
+                        padding: 12,
+                        cornerRadius: 10,
+                        displayColors: false,
+                        borderColor: 'rgba(139, 92, 246, 0.5)',
+                        borderWidth: 1,
                         callbacks: {
-                            label: (ctx) => {
-                                const val = ctx.parsed.x;
-                                return ' Rp ' + val.toLocaleString('id-ID');
+                            title: (items) => '📦 ' + items[0].label,
+                            label: (item) => {
+                                const val = item.parsed.y;
+                                return '💰 Rp ' + parseInt(val).toLocaleString('id-ID');
                             }
                         }
                     }
                 },
                 scales: {
                     x: {
-                        beginAtZero: true,
+                        grid: { display: false },
+                        border: { display: false },
                         ticks: {
-                            callback: (val) => 'Rp ' + val.toLocaleString('id-ID'),
-                            font: { size: 11, family: 'Outfit, sans-serif' },
-                            color: '#6b7280',
-                            maxTicksLimit: 6,
-                        },
-                        grid: { color: 'rgba(0,0,0,0.05)' }
+                            font: {
+                                size: isMobile ? 10 : 12,
+                                family: 'Outfit, sans-serif',
+                                weight: '600'
+                            },
+                            color: '#1e1b4b',
+                            maxRotation: isMobile ? 45 : 0,
+                            minRotation: 0,
+                            padding: 8,
+                            callback: function(value) {
+                                const label = this.getLabelForValue(value);
+                                if (isMobile && label.length > 12) {
+                                    return label.substring(0, 11) + '…';
+                                }
+                                return label;
+                            }
+                        }
                     },
                     y: {
-                        ticks: {
-                            font: { size: 12, family: 'Outfit, sans-serif', weight: '600' },
-                            color: '#1e1b4b',
+                        beginAtZero: true,
+                        border: { display: false },
+                        grid: {
+                            color: 'rgba(99, 102, 241, 0.08)',
+                            drawTicks: false
                         },
-                        grid: { display: false }
+                        ticks: {
+                            font: { size: 11, family: 'Outfit, sans-serif' },
+                            color: '#6b7280',
+                            padding: 10,
+                            maxTicksLimit: 6,
+                            callback: (val) => {
+                                if (val >= 1000000) return 'Rp ' + (val / 1000000).toFixed(1) + 'jt';
+                                if (val >= 1000) return 'Rp ' + (val / 1000) + 'rb';
+                                return 'Rp ' + val;
+                            }
+                        }
+                    }
+                },
+                onHover: (event, elements) => {
+                    if (event.native && event.native.target) {
+                        event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
                     }
                 }
-            }
+            },
+            plugins: [dataLabelPlugin]
         });
 
     } catch (error) {
         console.error('❌ Gagal render dashboard:', error);
+
+        // Tampilkan pesan error langsung di kartu chart, jangan cuma di console,
+        // supaya keliatan kenapa chart tidak muncul
+        if (canvas) canvas.style.display = 'none';
+        if (emptyEl) {
+            emptyEl.style.display = 'block';
+            emptyEl.innerHTML = `⚠️ Gagal memuat data statistik.<br>
+                <span style="font-size:.75rem;opacity:.8;">${error.message}</span>`;
+        }
     } finally {
         if (loadingEl) loadingEl.style.display = 'none';
     }

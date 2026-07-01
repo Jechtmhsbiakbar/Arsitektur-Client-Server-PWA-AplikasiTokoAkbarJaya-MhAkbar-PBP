@@ -423,10 +423,58 @@
         .loading-dots span:nth-child(2) { animation-delay: .2s; }
         .loading-dots span:nth-child(3) { animation-delay: .4s; }
 
-        /* =====================================================
-           DASHBOARD CHART
-        ===================================================== */
-        .chart-pad { padding: 20px 24px 26px; }
+        /* ============================================================
+        📊 CHART CONTAINER — Balok Besar Edition
+        ============================================================ */
+        .chart-pad {
+            position: relative;
+            width: 100%;
+            height: 380px;
+            padding: 20px 16px 16px;
+            background: 
+                radial-gradient(circle at 20% 0%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 100%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
+                linear-gradient(135deg, #f5f3ff 0%, #ede9fe 50%, #e0e7ff 100%);
+            border-radius: 16px;
+            box-shadow: 
+                0 4px 20px rgba(99, 102, 241, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(139, 92, 246, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .chart-pad:hover {
+            box-shadow: 
+                0 8px 28px rgba(99, 102, 241, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            border-color: rgba(139, 92, 246, 0.25);
+        }
+
+        .chart-pad canvas {
+            filter: drop-shadow(0 4px 10px rgba(99, 102, 241, 0.12));
+            transition: filter 0.3s ease;
+        }
+
+        .chart-pad:hover canvas {
+            filter: drop-shadow(0 6px 14px rgba(99, 102, 241, 0.22));
+        }
+
+        #chart-empty {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            font-weight: 600;
+        }
+
+        @media (max-width: 600px) {
+            .chart-pad {
+                height: 320px;
+                padding: 14px 10px 10px;
+                border-radius: 12px;
+            }
+        }
 
         /* =====================================================
            SEARCH
@@ -903,6 +951,14 @@
                 <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
                 Tambah Barang
             </button>
+            <!-- 🆕 TOMBOL EKSPOR PDF — membuka cetak.html di tab baru -->
+            <button class="btn-hdr" onclick="window.open('cetak.html', '_blank')" title="Ekspor Laporan ke PDF">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M4 4h16v9a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"/>
+                </svg>
+                Ekspor PDF
+            </button>
+
             <button class="btn-hdr" onclick="clearCacheAndReload()" title="Reset Cache">
                 <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                 Reset
@@ -1022,7 +1078,7 @@
             </div>
         </div>
         <div class="chart-pad">
-            <canvas id="myChart" height="120"></canvas>
+            <canvas id="myChart"></canvas>
             <div id="chart-empty" style="display:none;text-align:center;padding:36px 0;color:var(--text-sub);font-size:.85rem;">
                 📭 Belum ada data barang untuk ditampilkan.
             </div>
@@ -1113,7 +1169,7 @@
 <!-- =====================================================
      TESTING & DEBUG
 ===================================================== -->
-<div class="testing-section">
+<!-- <div class="testing-section">
     <div class="testing-header" id="testing-header" onclick="toggleTestingPanel()">
         <div style="display:flex;align-items:center;gap:10px;">
             <span id="status-icon" style="font-size:17px;">✅</span>
@@ -1177,7 +1233,7 @@
             <div style="color:#6ee7b7;">🔧 Debug Console Ready...</div>
         </div>
     </div>
-</div>
+</div> -->
 
 <!-- =====================================================
      FOOTER
